@@ -84,28 +84,35 @@ public:
      * 
      * @param param_color ...
      */
-    void GetColor(glm::vec3 param_color);
+    void SetColor(glm::vec3 param_color);
 
     /**
      * @brief TODO: Fill
      * 
      * @param param_rotation ...
      */
-    void GetRotation(GLfloat param_rotation);
+    void SetRotation(GLfloat param_rotation);
 
     /**
      * @brief TODO: Fill
      * 
      * @param param_is_solid ...
      */
-    void GetIsSolid(bool param_is_solid);
+    void SetIsSolid(bool param_is_solid);
 
     /**
      * @brief TODO: Fill
      * 
      * @param param_sprite ...
      */
-    void GetSprite(Texture2D param_sprite);
+    void SetSprite(Texture2D param_sprite);
+
+    /**
+     * @brief TODO: Fill
+     * 
+     * @param param_max_rotation ...
+     */
+    void SetMaxRotation(GLfloat param_max_rotation);
 
     /*Getters-------------------------------------*/
 
@@ -158,6 +165,13 @@ public:
      */
     Texture2D GetSprite();
 
+    /**
+     * @brief TODO: Fill
+     * 
+     * @return ...
+     */
+    GLfloat GetMaxRotation();
+
 private:
     /*--------------------------------------------*/
     
@@ -166,7 +180,9 @@ private:
     glm::vec2 m_velocity;
 
     glm::vec3 m_color;
+
     GLfloat m_rotation;
+    GLfloat m_max_rotation;
 
     bool m_is_solid;
 

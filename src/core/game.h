@@ -7,6 +7,7 @@
  *  @date   2022-30-01 
  **************************************************/
 #include <iostream>
+#include <math.h>
 
 #include <glm/glm.hpp>
 
@@ -16,6 +17,10 @@
 #include "game_object.h"
 
 #include <GLFW/glfw3.h>
+
+#define DEG_TO_RAD GLfloat(M_PI / 180)
+#define RAD_TO_DEG GLfloat(180 / M_PI)
+
 /**
  * @brief TODO: Fill
  */
@@ -53,20 +58,22 @@ public:
 
     /**
      * @brief TODO: Fill
+     * 
+     * @param param_delta_time ...
      */
-    void ProcessInput(GLfloat param_input);
+    void ProcessInput(GLfloat param_delta_time);
 
     /**
      * @brief TODO: Fill
      * 
-     * @param param_input ...
+     * @param param_tick ...
      */
-    void Update(GLfloat param_input);
+    void Update(bool param_tick);
 
     /**
      * @brief TODO: Fill
      * 
-     * @param param_input ...
+     * @param param_delta_time ...
      */
     void Render();
 
@@ -98,11 +105,12 @@ private:
     unsigned int m_width;
     unsigned int m_height;
 
+    bool m_tick;
+
     /*--------------------------------------------*/
     /* Please, remember to delete it in destructor*/
     GameObject* m_player;
     SpriteRenderer  *m_renderer;
-
 };
 
 #endif //_GAME_

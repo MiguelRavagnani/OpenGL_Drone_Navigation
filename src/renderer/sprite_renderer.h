@@ -51,7 +51,8 @@ public:
         GLfloat param_rotate = 0.0f, 
         glm::vec3 param_color = glm::vec3(1.0f));
 
-private:
+
+protected:
     /*--------------------------------------------*/
     
     /**

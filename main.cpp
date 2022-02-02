@@ -10,7 +10,6 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
@@ -46,18 +45,32 @@ int main(int argc, char *argv[])
 
     Drone.Init();
 
-    float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
+    GLfloat delta_time = 0.0f;
+    GLfloat last_time = 0.0f;
+    GLfloat last_frame = 0.0f;
 
     while (!glfwWindowShouldClose(window))
     {
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+
+        GLfloat current_time = glfwGetTime();
+        GLfloat current_frame = glfwGetTime();
+        
+        bool tick = false;
+
+        delta_time = current_time - last_time;
+        last_time = current_time;
+
+        if (current_frame - last_frame >= 1.0f)
+        {
+            last_frame = current_frame;
+
+            tick = true;
+        }
+
         glfwPollEvents();
 
-        Drone.ProcessInput(deltaTime);
-        Drone.Update(deltaTime);
+        Drone.ProcessInput(delta_time);
+        Drone.Update(tick);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);

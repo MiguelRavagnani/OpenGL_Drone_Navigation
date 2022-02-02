@@ -59,27 +59,32 @@ void GameObject::SetVelocity(glm::vec2 param_velocity)
 }
 
 
-void GameObject::GetColor(glm::vec3 param_color)
+void GameObject::SetColor(glm::vec3 param_color)
 {
     m_color = param_color;
 }
 
 
-void GameObject::GetRotation(GLfloat param_rotation)
+void GameObject::SetRotation(GLfloat param_rotation)
 {
     m_rotation = param_rotation;
 }
 
 
-void GameObject::GetIsSolid(bool param_is_solid)
+void GameObject::SetIsSolid(bool param_is_solid)
 {
     m_is_solid = param_is_solid;
 }
 
 
-void GameObject::GetSprite(Texture2D param_sprite)
+void GameObject::SetSprite(Texture2D param_sprite)
 {
     m_sprite = param_sprite;
+}
+
+void GameObject::SetMaxRotation(GLfloat param_max_rotation)
+{
+    m_max_rotation = param_max_rotation;
 }
 
 
@@ -122,4 +127,10 @@ bool GameObject::GetIsSolid()
 Texture2D GameObject::GetSprite()
 {
     return m_sprite;
+}
+
+
+GLfloat GameObject::GetMaxRotation()
+{
+    return m_max_rotation;
 }

@@ -1,22 +1,21 @@
-#include "sprite_renderer.h"
+#include "sprite_sheet_renderer.h"
 
-SpriteRenderer::SpriteRenderer(const Shader &param_shader)
-{
-    this->m_shader = param_shader;
-    this->initRenderData();
-}
+SpriteSheetRenderer::SpriteSheetRenderer(const Shader &param_shader)
+    : SpriteRenderer::SpriteRenderer(param_shader) {}
 
-SpriteRenderer::~SpriteRenderer()
+SpriteSheetRenderer::~SpriteSheetRenderer()
 {
     glDeleteVertexArrays(1, &this->m_quad_VAO);
 }
 
-void SpriteRenderer::DrawSprite(
+void SpriteSheetRenderer::DrawSheet(
     const Texture2D &param_texture, 
-    glm::vec2 param_position, 
-    glm::vec2 param_size, 
-    GLfloat param_rotate, 
-    glm::vec3 param_color)
+    glm::vec2 param_position,
+    GLuint param_frame_index,
+    glm::vec2 param_sheet_size = glm::vec2(10.0f, 10.0f), 
+    glm::vec2 param_sprite_size = glm::vec2(10.0f, 10.0f),
+    GLfloat param_rotate = 0.0f, 
+    glm::vec3 param_color = glm::vec3(1.0f))
 {
     this->m_shader.Use();
 
@@ -24,7 +23,7 @@ void SpriteRenderer::DrawSprite(
 
     model = glm::translate(model, glm::vec3(param_position, 0.0f));
     model = glm::rotate(model, glm::radians(param_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(param_size, 1.0f));
+    model = glm::scale(model, glm::vec3(param_sheet_size, 1.0f));
 
     this->m_shader.SetMatrix4("model", model);
 
@@ -38,18 +37,18 @@ void SpriteRenderer::DrawSprite(
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::initRenderData()
+void SpriteSheetRenderer::UpdateRenderData(GLuint param_sprite_widht, GLuint param_sprite_hight)
 {
     unsigned int VBO;
     GLfloat vertices[] = { 
     /*  pos         tex       */
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f, 
+        0.0f, 1.0f, 0.0f + param_sprite_widht, 1.0f,
+        1.0f, 0.0f, 1.0f + param_sprite_widht, 0.0f,
+        0.0f, 0.0f, 0.0f + param_sprite_widht, 0.0f, 
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
+        0.0f, 1.0f, 0.0f + param_sprite_widht, 1.0f,
+        1.0f, 1.0f, 1.0f + param_sprite_widht, 1.0f,
+        1.0f, 0.0f, 1.0f + param_sprite_widht, 0.0f
     };
 
     glGenVertexArrays(1, &this->m_quad_VAO);
