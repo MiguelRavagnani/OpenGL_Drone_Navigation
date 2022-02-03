@@ -7,6 +7,7 @@
  *  @author Miguel Ravagnani de Carvalho 
  *  @date   YYYY-DD-MM 
  **************************************************/
+#include <iostream>
 
 #include "sprite_renderer.h"
 
@@ -37,16 +38,18 @@ public:
      * 
      * @param param_texture ...
      * @param param_position ... 
+     * @param param_frame_index ...
+     * @param param_tick ...
      * @param param_sheet_size ...
      * @param param_sprite_size ...
      * @param param_rotate ...
      * @param param_color ...
-     * @param param_frame_index ...
      */
     void DrawSheet(
         const Texture2D &param_texture, 
         glm::vec2 param_position,
-        GLuint param_frame_index,
+        bool param_tick,
+        GLfloat param_frame_index,
         glm::vec2 param_sheet_size = glm::vec2(10.0f, 10.0f), 
         glm::vec2 param_sprite_size = glm::vec2(10.0f, 10.0f),
         GLfloat param_rotate = 0.0f, 
@@ -54,14 +57,18 @@ public:
 
 private:
     /*--------------------------------------------*/
+    /**
+     * @brief TODO: fill
+     * 
+     */
+    void initRenderData();
 
     /**
      * @brief TODO: Fill
      * 
-     * @param param_sprite_widht ...
-     * @param param_sprite_hight ...
+     * @param param_frame ...
      */
-    void UpdateRenderData(GLuint param_sprite_widht, GLuint param_sprite_hight);
+    void UpdateRenderData(GLuint param_frame);
 };
 
 #endif //_SPIRE_SHEET_RENDERER_

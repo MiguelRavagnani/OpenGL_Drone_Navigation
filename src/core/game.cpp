@@ -19,6 +19,7 @@ Game::~Game()
 {
     delete m_player;
 	delete m_renderer;
+	delete m_sheet_renderer;
 }
 
 void Game::Init()
@@ -41,23 +42,26 @@ void Game::Init()
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 	
     m_renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+	m_sheet_renderer = new SpriteSheetRenderer(ResourceManager::GetShader("sprite"));
 
-    ResourceManager::LoadTexture("../textures/drone_still.png", true, "player");
-	ResourceManager::LoadTexture("../textures/bg.png", false, "background");
+    ResourceManager::LoadTexture("../textures/drone_frame.png", true, "player");
+	ResourceManager::LoadTexture("../textures/bg_1.png", true, "background");
 
-	glm::vec2 player_size(60.0f * 2.0f, 60.0f * 2.0f);
+	glm::vec2 player_sheet_size(60.0f * 2.0f, 60.0f * 2.0f * 5.0f);
+	glm::vec2 player_sprite_size(60.0f * 2.0f, 60.0f * 2.0f);
 
 	glm::vec2 player_initial_velocity(500.0f, 500.0f);
 
 	glm::vec3 player_color(1.0f);
 
 	glm::vec2 player_inital_position = glm::vec2(
-        m_width / 2.0f - player_size.x / 2.0f, 
-        m_height - player_size.y);
+        m_width / 2.0f - player_sheet_size.x / 2.0f, 
+        m_height - player_sheet_size.y);
 
 	m_player = new GameObject(
 		player_inital_position, 
-		player_size, 
+		player_sheet_size,
+		player_sprite_size,
 		ResourceManager::GetTexture("player"),
 		player_color,
 		player_initial_velocity);
@@ -70,9 +74,6 @@ void Game::Init()
 void Game::Update(bool param_tick)
 {
 	m_tick = param_tick;
-
-	if (m_tick)
-		std::cout << "Tick!" << std::endl;
 }
 
 void Game::ProcessInput(GLfloat param_delta_time)
@@ -96,7 +97,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 
         if (this->m_keys[GLFW_KEY_D])
         {
-            if (m_player->GetPosition().x <= this->m_width - m_player->GetSize().x)
+            if (m_player->GetPosition().x <= this->m_width - m_player->GetSpriteSize().x)
 			{
 				new_position = glm::vec2(
 					m_player->GetPosition().x + velocity, 
@@ -120,7 +121,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 
         if (this->m_keys[GLFW_KEY_S])
         {
-            if (m_player->GetPosition().y <= this->m_height - m_player->GetSize().y)
+            if (m_player->GetPosition().y <= this->m_height - m_player->GetSpriteSize().y)
 			{
 				new_position = glm::vec2(
 					m_player->GetPosition().x, 
@@ -159,7 +160,7 @@ void Game::Render()
 			glm::vec2(this->m_width, this->m_height), 
 			0.0f);
 
-		m_player->Draw(*m_renderer);
+		m_player->Draw(*m_sheet_renderer, m_tick);
     }
 }  
 /*Methods-------------------------------------*/

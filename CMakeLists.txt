@@ -42,7 +42,8 @@ set(SOURCE_FILES
     src/core/resource_manager.cpp
     src/shading/shader.cpp
     src/shading/texture.cpp
-    src/renderer/sprite_renderer.cpp)
+    src/renderer/sprite_renderer.cpp
+    src/renderer/sprite_sheet_renderer.cpp)
 
 add_executable(game ${SOURCE_FILES} )
 

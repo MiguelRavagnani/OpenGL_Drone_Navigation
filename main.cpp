@@ -10,8 +10,8 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-const unsigned int SCREEN_WIDTH = 800;
-const unsigned int SCREEN_HEIGHT = 600;
+const unsigned int SCREEN_WIDTH = 1070;
+const unsigned int SCREEN_HEIGHT = 800;
 
 Game Drone(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         delta_time = current_time - last_time;
         last_time = current_time;
 
-        if (current_frame - last_frame >= 1.0f)
+        if (current_frame - last_frame >= 0.075f)
         {
             last_frame = current_frame;
 

@@ -11,20 +11,29 @@ SpriteSheetRenderer::~SpriteSheetRenderer()
 void SpriteSheetRenderer::DrawSheet(
     const Texture2D &param_texture, 
     glm::vec2 param_position,
-    GLuint param_frame_index,
-    glm::vec2 param_sheet_size = glm::vec2(10.0f, 10.0f), 
-    glm::vec2 param_sprite_size = glm::vec2(10.0f, 10.0f),
-    GLfloat param_rotate = 0.0f, 
-    glm::vec3 param_color = glm::vec3(1.0f))
+    bool param_tick,
+    GLfloat param_frame_index,
+    glm::vec2 param_sheet_size, 
+    glm::vec2 param_sprite_size,
+    GLfloat param_rotate, 
+    glm::vec3 param_color)
 {
+    if (param_tick)
+    {
+        UpdateRenderData(param_frame_index);
+    }
+
     this->m_shader.Use();
 
     glm::mat4 model = glm::mat4(1.0f);
 
     model = glm::translate(model, glm::vec3(param_position, 0.0f));
-    model = glm::rotate(model, glm::radians(param_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(param_sheet_size, 1.0f));
 
+    model = glm::translate(model, glm::vec3(param_sprite_size.x * 0.5f, param_sprite_size.y * 0.5f, 0.0f));
+    model = glm::rotate(model, glm::radians(param_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-param_sprite_size.x * 0.5f, -param_sprite_size.y * 0.5f, 0.0f));
+
+    model = glm::scale(model, glm::vec3(param_sheet_size, 1.0f));
     this->m_shader.SetMatrix4("model", model);
 
     this->m_shader.SetVector3f("spriteColor", param_color);
@@ -37,18 +46,44 @@ void SpriteSheetRenderer::DrawSheet(
     glBindVertexArray(0);
 }
 
-void SpriteSheetRenderer::UpdateRenderData(GLuint param_sprite_widht, GLuint param_sprite_hight)
+void SpriteSheetRenderer::UpdateRenderData(GLuint param_frame)
 {
     unsigned int VBO;
     GLfloat vertices[] = { 
     /*  pos         tex       */
-        0.0f, 1.0f, 0.0f + param_sprite_widht, 1.0f,
-        1.0f, 0.0f, 1.0f + param_sprite_widht, 0.0f,
-        0.0f, 0.0f, 0.0f + param_sprite_widht, 0.0f, 
+        0.0f, 0.2f, 0.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.0f, 1.0f, (0.0f     + (0.16667 * (param_frame - 1.0f))),
+        0.0f, 0.0f, 0.0f, (0.0f     + (0.16667 * (param_frame - 1.0f))),
+        0.0f, 0.2f, 0.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.2f, 1.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.0f, 1.0f, (0.0f     + (0.16667 * (param_frame - 1.0f)))
+    };
 
-        0.0f, 1.0f, 0.0f + param_sprite_widht, 1.0f,
-        1.0f, 1.0f, 1.0f + param_sprite_widht, 1.0f,
-        1.0f, 0.0f, 1.0f + param_sprite_widht, 0.0f
+    glGenVertexArrays(1, &this->m_quad_VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(this->m_quad_VAO);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void SpriteSheetRenderer::initRenderData()
+{
+    unsigned int VBO;
+    GLfloat vertices[] = { 
+    /*  pos         tex       */
+        0.0f, 0.2f, 0.0f, 0.16667f,
+        1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 
+
+        0.0f, 0.2f, 0.0f, 0.16667f,
+        1.0f, 0.2f, 1.0f, 0.16667f,
+        1.0f, 0.0f, 1.0f, 0.0f
     };
 
     glGenVertexArrays(1, &this->m_quad_VAO);

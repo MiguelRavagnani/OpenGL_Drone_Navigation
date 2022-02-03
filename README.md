@@ -16,5 +16,5 @@ make
 ```
 Run it
 ```console
-./scene
+./game
 ```

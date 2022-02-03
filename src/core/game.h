@@ -11,7 +11,7 @@
 
 #include <glm/glm.hpp>
 
-#include "sprite_renderer.h"
+#include "sprite_sheet_renderer.h"
 #include "resource_manager.h"
 
 #include "game_object.h"
@@ -111,6 +111,8 @@ private:
     /* Please, remember to delete it in destructor*/
     GameObject* m_player;
     SpriteRenderer  *m_renderer;
+    SpriteSheetRenderer *m_sheet_renderer;
+
 };
 
 #endif //_GAME_
