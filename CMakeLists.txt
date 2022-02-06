@@ -27,6 +27,7 @@ set(LOCAL_INCLUDE_DIRS
     "${CMAKE_SOURCE_DIR}/src/shading"
     "${CMAKE_SOURCE_DIR}/src/utility"
     "${CMAKE_SOURCE_DIR}/src/renderer"
+    "${CMAKE_SOURCE_DIR}/src/physics"
     "${CMAKE_SOURCE_DIR}/src/third_party/Glad/src")
 
 set(LIBRARIES ${OPENGL_LIBRARIES} ${glm_LIBRARIES} ${GLEW_LIBRARIES} ${glfw3_LIBRARIES})
@@ -43,7 +44,8 @@ set(SOURCE_FILES
     src/shading/shader.cpp
     src/shading/texture.cpp
     src/renderer/sprite_renderer.cpp
-    src/renderer/sprite_sheet_renderer.cpp)
+    src/renderer/sprite_sheet_renderer.cpp
+    src/physics/screen_colision.cpp)
 
 add_executable(game ${SOURCE_FILES} )
 

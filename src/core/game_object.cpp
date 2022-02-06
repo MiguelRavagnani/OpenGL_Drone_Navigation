@@ -86,7 +86,6 @@ void GameObject::Draw(
     }
 }
 
-
 void GameObject::SetPosition(glm::vec2 param_position)
 {
     m_position = param_position;

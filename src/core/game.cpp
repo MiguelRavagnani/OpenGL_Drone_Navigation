@@ -3,8 +3,8 @@
 /*Constructors--------------------------------*/
 Game::Game()
     
-    : m_width (800),
-      m_height (600),
+    : m_width (600),
+      m_height (450),
 	  m_tick (false) {}
 
 Game::Game(
@@ -20,6 +20,7 @@ Game::~Game()
     delete m_player;
 	delete m_renderer;
 	delete m_sheet_renderer;
+	delete m_screen_colision;
 }
 
 void Game::Init()
@@ -45,10 +46,11 @@ void Game::Init()
 	m_sheet_renderer = new SpriteSheetRenderer(ResourceManager::GetShader("sprite"));
 
     ResourceManager::LoadTexture("../textures/drone_frame.png", true, "player");
-	ResourceManager::LoadTexture("../textures/bg_1.png", true, "background");
+	ResourceManager::LoadTexture("../textures/drone_still.png", true, "player_still");
+	ResourceManager::LoadTexture("../textures/bg_2.png", true, "background");
 
-	glm::vec2 player_sheet_size(60.0f * 2.0f, 60.0f * 2.0f * 5.0f);
-	glm::vec2 player_sprite_size(60.0f * 2.0f, 60.0f * 2.0f);
+	glm::vec2 player_sheet_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f * 5.0f);
+	glm::vec2 player_sprite_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f);
 
 	glm::vec2 player_initial_velocity(500.0f, 500.0f);
 
@@ -68,11 +70,20 @@ void Game::Init()
 
 	m_player->SetMaxRotation(45.0f);
 
+	GLfloat colision_height_percentage = (1.0f / 7.0f);
+
+	m_screen_colision = new ScreenColision(
+        this->m_width, 
+        this->m_height, 
+        colision_height_percentage,
+		(m_width / 8.0f));
+
 	m_state = GAME_ACTIVE;
 }
 
 void Game::Update(bool param_tick)
 {
+	m_floor_colision = m_screen_colision->DetectColisionY(m_player->GetPosition());
 	m_tick = param_tick;
 }
 
@@ -121,7 +132,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 
         if (this->m_keys[GLFW_KEY_S])
         {
-            if (m_player->GetPosition().y <= this->m_height - m_player->GetSpriteSize().y)
+            if (!m_floor_colision)
 			{
 				new_position = glm::vec2(
 					m_player->GetPosition().x, 
@@ -160,7 +171,27 @@ void Game::Render()
 			glm::vec2(this->m_width, this->m_height), 
 			0.0f);
 
-		m_player->Draw(*m_sheet_renderer, m_tick);
+		if (!m_floor_colision)
+		{
+			glm::vec2 player_sheet_size((this->m_width / 8.0f), (this->m_width / 8.0f) * 5.0f);
+			glm::vec2 player_sprite_size((this->m_width / 8.0f), (this->m_width / 8.0f));
+
+			m_player->SetSize(player_sheet_size);
+
+			m_player->SetSprite(ResourceManager::GetTexture("player"));
+			m_player->SetSpriteSize(player_sprite_size);
+			m_player->Draw(*this->m_sheet_renderer, m_tick);
+		}
+		else
+		{
+			glm::vec2 player_sprite_size((this->m_width / 8.0f) * 1.0f, (this->m_width / 8.0f) * 1.0f);
+
+			m_player->SetSize(player_sprite_size);
+
+			m_player->SetSprite(ResourceManager::GetTexture("player_still"));
+			m_player->SetSpriteSize(player_sprite_size);
+			m_player->Draw(*this->m_renderer);
+		}
     }
 }  
 /*Methods-------------------------------------*/

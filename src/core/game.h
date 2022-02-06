@@ -15,6 +15,7 @@
 #include "resource_manager.h"
 
 #include "game_object.h"
+#include "screen_colision.h"
 
 #include <GLFW/glfw3.h>
 
@@ -112,6 +113,9 @@ private:
     GameObject* m_player;
     SpriteRenderer  *m_renderer;
     SpriteSheetRenderer *m_sheet_renderer;
+    ScreenColision *m_screen_colision;
+
+    bool m_floor_colision;
 
 };
 
