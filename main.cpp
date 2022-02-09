@@ -5,7 +5,8 @@
 #include "resource_manager.h"
 
 #include <iostream>
-
+#include <sstream>
+#include <iomanip>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -46,23 +47,38 @@ int main(int argc, char *argv[])
     Drone.Init();
 
     GLfloat delta_time = 0.0f;
-    GLfloat last_time = 0.0f;
-    GLfloat last_frame = 0.0f;
+    GLfloat delta_last_time = 0.0f;
+
+    GLfloat last_sprite_frame_time = 0.0f;
 
     while (!glfwWindowShouldClose(window))
     {
 
-        GLfloat current_time = glfwGetTime();
-        GLfloat current_frame = glfwGetTime();
+        GLfloat delta_current_time = glfwGetTime();
+        GLfloat current_sprite_frame_time = glfwGetTime();
         
         bool tick = false;
 
-        delta_time = current_time - last_time;
-        last_time = current_time;
+        delta_time = delta_current_time - delta_last_time;
+        delta_last_time = delta_current_time;
 
-        if (current_frame - last_frame >= 0.075f)
+        std::stringstream FPS(std::stringstream::in | std::stringstream::out);
+        FPS << std::fixed << std::setprecision(2) << (1.0f / delta_time);
+        
+        std::stringstream milisseconds(std::stringstream::in | std::stringstream::out);
+        milisseconds << std::fixed << std::setprecision(2) << (delta_time * 1000.0f);
+
+        std::stringstream FPS_title(std::stringstream::in | std::stringstream::out);
+        FPS_title << "Drone Simulation - FPS: "
+                  << FPS.str()
+                  << " | Milisseconds: "
+                  << milisseconds.str();
+            
+        glfwSetWindowTitle(window, FPS_title.str().c_str());
+
+        if (current_sprite_frame_time - last_sprite_frame_time >= 0.075f)
         {
-            last_frame = current_frame;
+            last_sprite_frame_time = current_sprite_frame_time;
 
             tick = true;
         }

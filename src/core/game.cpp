@@ -1,5 +1,7 @@
 #include "game.h"
 
+#define GRAVITY 0
+
 /*Constructors--------------------------------*/
 Game::Game()
     
@@ -52,7 +54,7 @@ void Game::Init()
 	glm::vec2 player_sheet_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f * 5.0f);
 	glm::vec2 player_sprite_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f);
 
-	glm::vec2 player_initial_velocity(500.0f, 500.0f);
+	glm::vec2 player_initial_velocity(1.0f, 1.0f);
 
 	glm::vec3 player_color(1.0f);
 
@@ -85,6 +87,7 @@ void Game::Update(bool param_tick)
 {
 	m_floor_colision = m_screen_colision->DetectColisionY(m_player->GetPosition());
 	m_tick = param_tick;
+	std::cout << "Position Y: " << m_player->GetPosition().y << std::endl;
 }
 
 void Game::ProcessInput(GLfloat param_delta_time)
@@ -130,6 +133,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
         }
 
+#if !GRAVITY
         if (this->m_keys[GLFW_KEY_S])
         {
             if (!m_floor_colision)
@@ -142,7 +146,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
 			
         }
-
+#endif
 		if (this->m_keys[GLFW_KEY_Q])
         {
             if (m_player->GetRotation() >= -1.0f * (m_player->GetMaxRotation()))
