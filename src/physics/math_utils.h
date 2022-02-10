@@ -12,6 +12,8 @@
 
 #define PI 3.14159265
 
+#include "model.h"
+
 /**
  * @brief Math utility
  */
@@ -31,7 +33,7 @@ namespace Math
          * @param param_integration_step ...
          * @param param_current_state_vector ...
          * @param param_current_input_cmd ...
-         * @param param_state_vector ...
+         * @param param_model ...
          * 
          * @return std::vector<GLfloat> ... 
          */
@@ -40,10 +42,7 @@ namespace Math
             std::vector<GLfloat> param_integration_step,
             std::vector<GLfloat> param_current_state_vector,
             std::vector<GLfloat> param_current_input_cmd,
-            std::vector<GLfloat> (*param_state_vector)(
-                std::vector<GLfloat>, 
-                std::vector<GLfloat>, 
-                std::vector<GLfloat>));
+            Model* param_model);
     }
 
     namespace Conversion

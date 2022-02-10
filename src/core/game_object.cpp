@@ -11,7 +11,6 @@ GameObject::GameObject()
       m_is_solid (false),
       m_frame (0.0f) {}
 
-
 GameObject::GameObject(
     glm::vec2 param_initial_position, 
     glm::vec2 param_sheet_size, 
@@ -48,7 +47,10 @@ GameObject::GameObject(
       m_frame (1.0f) {}
 
 
-GameObject::~GameObject() {}
+GameObject::~GameObject()
+{
+    delete m_drone_model;
+}
 
 
 void GameObject::Draw(SpriteRenderer &param_renderer)
@@ -137,6 +139,10 @@ void GameObject::SetMaxRotation(GLfloat param_max_rotation)
     m_max_rotation = param_max_rotation;
 }
 
+void GameObject::SetDroneModel(Model* param_drone_model)
+{
+    m_drone_model = param_drone_model;
+}
 
 glm::vec2 GameObject::GetPosition()
 {

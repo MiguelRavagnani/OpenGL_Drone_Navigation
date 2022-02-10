@@ -13,6 +13,7 @@
 
 #include <iostream>
 
+#include "model.h"
 #include "sprite_sheet_renderer.h"
 
 /**
@@ -151,6 +152,13 @@ public:
      */
     void SetMaxRotation(GLfloat param_max_rotation);
 
+    /**
+     * @brief Set the Drone Model object
+     * 
+     * @param param_drone_model ...
+     */
+    void SetDroneModel(Model* param_drone_model);
+
     /*Getters-------------------------------------*/
 
     /**
@@ -216,6 +224,8 @@ public:
      */
     GLfloat GetMaxRotation();
 
+    Model* m_drone_model;
+    
 private:
     /*--------------------------------------------*/
     

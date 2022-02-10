@@ -5,17 +5,14 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     std::vector<GLfloat> param_integration_step,
     std::vector<GLfloat> param_current_state_vector,
     std::vector<GLfloat> param_current_input_cmd,
-    std::vector<GLfloat> (*param_state_vector)(
-        std::vector<GLfloat>, 
-        std::vector<GLfloat>, 
-        std::vector<GLfloat>))
+    Model* param_model)
 {
 
 
     std::vector<GLfloat> k_time;
     k_time.push_back(param_current_time[0] + param_integration_step[0] / 2.0f);
 
-    std::vector<GLfloat> k_1 = param_state_vector(
+    std::vector<GLfloat> k_1 = param_model->StateVector(
         param_current_time, 
         param_current_state_vector, 
         param_current_input_cmd);
@@ -32,7 +29,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
         param_current_state_vector[7] + (k_1[7] * param_integration_step[0] / 2.0f)
     };
 
-    std::vector<GLfloat> k_2 = param_state_vector(
+    std::vector<GLfloat> k_2 = param_model->StateVector(
         k_time, 
         k_input, 
         param_current_input_cmd);
@@ -46,7 +43,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     k_input[6] = param_current_state_vector[6] + (k_2[6] * param_integration_step[0] / 2.0f);
     k_input[7] = param_current_state_vector[7] + (k_2[7] * param_integration_step[0] / 2.0f);
 
-    std::vector<GLfloat> k_3 = param_state_vector(
+    std::vector<GLfloat> k_3 = param_model->StateVector(
         k_time, 
         k_input,
         param_current_input_cmd);
@@ -62,7 +59,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     k_input[6] = param_current_state_vector[6] + (k_3[6] * param_integration_step[0]);
     k_input[7] = param_current_state_vector[7] + (k_3[7] * param_integration_step[0]);
 
-    std::vector<GLfloat> k_4 = param_state_vector(
+    std::vector<GLfloat> k_4 = param_model->StateVector(
         k_time, 
         k_input, 
         param_current_input_cmd);

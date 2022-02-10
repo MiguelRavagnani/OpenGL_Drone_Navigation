@@ -54,7 +54,7 @@ void Game::Init()
 	glm::vec2 player_sheet_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f * 5.0f);
 	glm::vec2 player_sprite_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f);
 
-	glm::vec2 player_initial_velocity(1.0f, 1.0f);
+	glm::vec2 player_initial_velocity(100.0f, 100.0f);
 
 	glm::vec3 player_color(1.0f);
 
@@ -79,6 +79,27 @@ void Game::Init()
         this->m_height, 
         colision_height_percentage,
 		(m_width / 8.0f));
+
+	Model drone_model(
+        1500.0f,
+        0.25f,
+        9.81f,
+        0.1f,
+        0.00000001744,
+        0.0002f,
+        0.005,
+        0.00006f);
+
+	m_player->SetDroneModel(&drone_model);
+
+	m_player->m_drone_model->SetStateMotorSpeed1(0.0f);
+	m_player->m_drone_model->SetStateMotorSpeed2(0.0f);
+	m_player->m_drone_model->SetStatePosition1(0.0f);
+	m_player->m_drone_model->SetStatePosition2(0.0f);
+	m_player->m_drone_model->SetStateLinearSpeed1(0.0f);
+	m_player->m_drone_model->SetStateLinearSpeed2(0.0f);
+	m_player->m_drone_model->SetStatePhi(0.0f);
+	m_player->m_drone_model->SetStateAngularVelocity(0.0f);
 
 	m_state = GAME_ACTIVE;
 }
@@ -133,6 +154,17 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
         }
 
+		if (this->m_keys[GLFW_KEY_Q])
+        {
+			m_player->m_drone_model->SetStateMotorSpeed2(14000);
+        }
+		if (this->m_keys[GLFW_KEY_Q])
+        {
+			m_player->m_drone_model->SetStateMotorSpeed1(14000);
+        }
+
+		m_player->m_drone_model->UpdatePhysics();
+
 #if !GRAVITY
         if (this->m_keys[GLFW_KEY_S])
         {
@@ -146,7 +178,6 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
 			
         }
-#endif
 		if (this->m_keys[GLFW_KEY_Q])
         {
             if (m_player->GetRotation() >= -1.0f * (m_player->GetMaxRotation()))
@@ -162,6 +193,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 				m_player->SetRotation((m_player->GetRotation() + 2.0f / param_delta_time * DEG_TO_RAD));
 			}
         }
+#endif
     }
 }
 
