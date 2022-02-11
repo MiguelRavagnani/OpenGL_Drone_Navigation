@@ -17,6 +17,11 @@ namespace Physics
 {
     namespace FourthOrder
     {
+        /**
+         * @brief Updates physics of a model
+         * 
+         * @param param_drone_model ...
+         */
         void UpdatePhysics(Model* param_drone_model);
     }
 }

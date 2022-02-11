@@ -75,7 +75,7 @@ public:
      */
     std::vector<GLfloat> StateVector(
         std::vector<GLfloat> param_time, 
-        std::vector<GLfloat> param_state_vector, 
+        std::vector<GLfloat> *param_state_vector, 
         std::vector<GLfloat> param_input_cmd);
 
     /**
@@ -146,6 +146,13 @@ public:
      * @param param_command ...
      */
     void SetCommand(std::vector<GLfloat> param_command);
+
+    /**
+     * @brief Set the Delta Time object
+     * 
+     * @param param_delta_time ...
+     */
+    void SetDeltaTime(GLfloat param_delta_time);
 
     /*Get-----------------------------------------*/
 
@@ -226,6 +233,13 @@ public:
      */
     GLfloat GetIntegrationStep();
 
+    /**
+     * @brief Get the Delta Time object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat GetDeltaTime();
+
     struct DroneModelParameters
     {
         /** @brief  w_max | default (15000)*/
@@ -260,6 +274,8 @@ private:
     /*--------------------------------------------*/
 
     DroneModelParameters m_drone_parameters;
+
+    GLfloat m_delta_time;
     
 };
 

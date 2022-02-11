@@ -10,7 +10,7 @@
 
 #include <glad/glad.h>
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 #include "model.h"
 

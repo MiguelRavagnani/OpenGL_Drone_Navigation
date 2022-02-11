@@ -1,5 +1,7 @@
 #include "physics_handler.h"
 
+#include <iostream>
+
 void Physics::FourthOrder::UpdatePhysics(Model* param_drone_model)
 {
     std::vector<GLfloat> time {0.0f};

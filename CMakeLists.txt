@@ -45,7 +45,10 @@ set(SOURCE_FILES
     src/shading/texture.cpp
     src/renderer/sprite_renderer.cpp
     src/renderer/sprite_sheet_renderer.cpp
-    src/physics/screen_colision.cpp)
+    src/physics/screen_colision.cpp
+    src/physics/math_utils.cpp
+    src/physics/model.cpp
+    src/physics/physics_handler.cpp)
 
 add_executable(game ${SOURCE_FILES} )
 

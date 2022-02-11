@@ -1,6 +1,6 @@
 #include "game.h"
 
-#define GRAVITY 0
+#define GRAVITY 1
 
 /*Constructors--------------------------------*/
 Game::Game()
@@ -80,22 +80,22 @@ void Game::Init()
         colision_height_percentage,
 		(m_width / 8.0f));
 
-	Model drone_model(
-        1500.0f,
+	m_drone_model = new Model(
+        15000.0f,
         0.25f,
-        9.81f,
+        9.81f * -100.0f,
         0.1f,
-        0.00000001744,
+        0.0000001744f / 1.5f,
         0.0002f,
-        0.005,
-        0.00006f);
+        0.05,
+        0.006f);
 
-	m_player->SetDroneModel(&drone_model);
+	m_player->SetDroneModel(m_drone_model);
 
 	m_player->m_drone_model->SetStateMotorSpeed1(0.0f);
 	m_player->m_drone_model->SetStateMotorSpeed2(0.0f);
-	m_player->m_drone_model->SetStatePosition1(0.0f);
-	m_player->m_drone_model->SetStatePosition2(0.0f);
+	m_player->m_drone_model->SetStatePosition1(340.0f);
+	m_player->m_drone_model->SetStatePosition2(100.0f);
 	m_player->m_drone_model->SetStateLinearSpeed1(0.0f);
 	m_player->m_drone_model->SetStateLinearSpeed2(0.0f);
 	m_player->m_drone_model->SetStatePhi(0.0f);
@@ -115,6 +115,24 @@ void Game::ProcessInput(GLfloat param_delta_time)
 {
     if (this->m_state == GAME_ACTIVE)
     {
+
+		if (this->m_keys[GLFW_KEY_Q])
+        {
+			m_player->m_drone_model->SetStateMotorSpeed2(1000);
+        }
+		if (this->m_keys[GLFW_KEY_E])
+        {
+			m_player->m_drone_model->SetStateMotorSpeed1(1000);
+        }
+
+		m_player->m_drone_model->SetDeltaTime(param_delta_time);
+		glm::vec2 new_position(
+			m_player->m_drone_model->GetStateVector()[2],
+			m_player->m_drone_model->GetStateVector()[3]);
+		
+		m_player->SetPosition(new_position);
+
+#if !GRAVITY
         GLfloat velocity = m_player->GetVelocity().x * param_delta_time; 
 		glm::vec2 new_position;
 
@@ -154,18 +172,6 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
         }
 
-		if (this->m_keys[GLFW_KEY_Q])
-        {
-			m_player->m_drone_model->SetStateMotorSpeed2(14000);
-        }
-		if (this->m_keys[GLFW_KEY_Q])
-        {
-			m_player->m_drone_model->SetStateMotorSpeed1(14000);
-        }
-
-		m_player->m_drone_model->UpdatePhysics();
-
-#if !GRAVITY
         if (this->m_keys[GLFW_KEY_S])
         {
             if (!m_floor_colision)
@@ -194,7 +200,28 @@ void Game::ProcessInput(GLfloat param_delta_time)
 			}
         }
 #endif
-    }
+		Physics::FourthOrder::UpdatePhysics(m_player->m_drone_model);
+		std::cout << "Calculated w1: " << m_player->m_drone_model->GetStateVector()[0] << std::endl;
+		std::cout << "Calculated w2: " << m_player->m_drone_model->GetStateVector()[1] << std::endl;
+		std::cout << "Calculated r1: " << m_player->m_drone_model->GetStateVector()[2] << std::endl;
+		std::cout << "Calculated r2: " << m_player->m_drone_model->GetStateVector()[3] << std::endl;
+		std::cout << "Calculated v1: " << m_player->m_drone_model->GetStateVector()[4] << std::endl;
+		std::cout << "Calculated v2: " << m_player->m_drone_model->GetStateVector()[5] << std::endl;
+		std::cout << "Calculated phi: " << Math::Conversion::RadiansToDegrees(m_player->m_drone_model->GetStateVector()[6]) << std::endl;
+		std::cout << "Calculated omega: " << (m_player->m_drone_model->GetStateVector()[7]) << std::endl;
+
+		m_player->SetRotation(Math::Conversion::RadiansToDegrees(m_player->m_drone_model->GetStateVector()[6]));
+    
+		if (m_floor_colision)
+		{
+			m_player->m_drone_model->SetStateLinearSpeed2(0.0f);
+
+			if ((this->m_keys[GLFW_KEY_E]) && (this->m_keys[GLFW_KEY_E]))
+			{
+				m_player->m_drone_model->SetStateLinearSpeed2(-10.0f);
+			}
+		}
+	}
 }
 
 void Game::Render()

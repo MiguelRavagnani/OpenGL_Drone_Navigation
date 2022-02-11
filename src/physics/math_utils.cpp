@@ -1,5 +1,7 @@
 #include "math_utils.h"
 
+#include <iostream>
+
 std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     std::vector<GLfloat> param_current_time,
     std::vector<GLfloat> param_integration_step,
@@ -7,16 +9,14 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     std::vector<GLfloat> param_current_input_cmd,
     Model* param_model)
 {
-
-
     std::vector<GLfloat> k_time;
     k_time.push_back(param_current_time[0] + param_integration_step[0] / 2.0f);
 
     std::vector<GLfloat> k_1 = param_model->StateVector(
         param_current_time, 
-        param_current_state_vector, 
+        &param_current_state_vector, 
         param_current_input_cmd);
-
+    
     std::vector<GLfloat> k_input 
     {
         param_current_state_vector[0] + (k_1[0] * param_integration_step[0] / 2.0f),
@@ -31,7 +31,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
 
     std::vector<GLfloat> k_2 = param_model->StateVector(
         k_time, 
-        k_input, 
+        &k_input, 
         param_current_input_cmd);
 
     k_input[0] = param_current_state_vector[0] + (k_2[0] * param_integration_step[0] / 2.0f);
@@ -45,7 +45,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
 
     std::vector<GLfloat> k_3 = param_model->StateVector(
         k_time, 
-        k_input,
+        &k_input,
         param_current_input_cmd);
 
     k_time[0] = k_time[0] * 2.0f;
@@ -61,7 +61,7 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
 
     std::vector<GLfloat> k_4 = param_model->StateVector(
         k_time, 
-        k_input, 
+        &k_input, 
         param_current_input_cmd);
 
     std::vector<GLfloat> k_output
@@ -77,4 +77,14 @@ std::vector<GLfloat> Math::FourthOrder::RungeKutta(
     };
 
     return k_output;
+}
+
+GLfloat Math::Conversion::RadiansToDegrees(GLfloat param_radians)
+{
+    return param_radians * 180.0f / PI;
+}
+
+GLfloat Math::Conversion::DegreesToRadians(GLfloat param_degrees)
+{
+    return param_degrees * PI / 180.0f;
 }

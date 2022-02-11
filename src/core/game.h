@@ -16,6 +16,7 @@
 
 #include "game_object.h"
 #include "screen_colision.h"
+#include "physics_handler.h"
 
 #include <GLFW/glfw3.h>
 
@@ -114,6 +115,7 @@ private:
     SpriteRenderer  *m_renderer;
     SpriteSheetRenderer *m_sheet_renderer;
     ScreenColision *m_screen_colision;
+    Model* m_drone_model;
 
     bool m_floor_colision;
 
