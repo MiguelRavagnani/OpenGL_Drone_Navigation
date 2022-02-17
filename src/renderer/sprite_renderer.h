@@ -51,6 +51,21 @@ public:
         GLfloat param_rotate = 0.0f, 
         glm::vec3 param_color = glm::vec3(1.0f));
 
+    /**
+     * @brief TODO: fill
+     * 
+     * @param param_texture ...
+     * @param param_position ... 
+     * @param param_size ...
+     * @param param_rotate ...
+     * @param param_color ...
+     */
+    void DrawBackground(
+        const Texture2D &param_texture, 
+        glm::vec2 param_position, 
+        glm::vec2 param_size = glm::vec2(10.0f, 10.0f), 
+        GLfloat param_rotate = 0.0f, 
+        glm::vec3 param_color = glm::vec3(1.0f));
 
 protected:
     /*--------------------------------------------*/

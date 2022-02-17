@@ -20,6 +20,7 @@ Game::Game(
 Game::~Game()
 {
     delete m_player;
+	delete m_waypoint;
 	delete m_renderer;
 	delete m_sheet_renderer;
 	delete m_screen_colision;
@@ -48,6 +49,7 @@ void Game::Init()
 	m_sheet_renderer = new SpriteSheetRenderer(ResourceManager::GetShader("sprite"));
 
     ResourceManager::LoadTexture("../textures/drone_frame.png", true, "player");
+	ResourceManager::LoadTexture("../textures/waypoint_1.png", true, "waypoint");
 	ResourceManager::LoadTexture("../textures/drone_still.png", true, "player_still");
 	ResourceManager::LoadTexture("../textures/bg_2.png", true, "background");
 
@@ -70,9 +72,19 @@ void Game::Init()
 		player_color,
 		player_initial_velocity);
 
+	m_waypoint = new GameObject(
+		glm::vec2(m_width - 100.0f),
+		glm::vec2(m_width / 8.0f),
+		glm::vec2(m_width / 8.0f),
+		ResourceManager::GetTexture("waypoint"),
+		glm::vec3(1.0f),
+		glm::vec2(0.0f));
+
 	m_player->SetMaxRotation(45.0f);
 
-	GLfloat colision_height_percentage = (1.0f / 7.0f);
+	GLfloat colision_height_percentage = (1.0f / 16.0f);
+
+	std::cout << m_height - colision_height_percentage * m_height << std::endl;
 
 	m_screen_colision = new ScreenColision(
         this->m_width, 
@@ -87,19 +99,19 @@ void Game::Init()
         0.1f,
         0.0000001744f / 1.5f,
         0.0002f,
-        0.05,
+        0.005,
         0.006f);
 
 	m_player->SetDroneModel(m_drone_model);
 
-	m_player->m_drone_model->SetStateMotorSpeed1(0.0f);
-	m_player->m_drone_model->SetStateMotorSpeed2(0.0f);
-	m_player->m_drone_model->SetStatePosition1(340.0f);
-	m_player->m_drone_model->SetStatePosition2(100.0f);
-	m_player->m_drone_model->SetStateLinearSpeed1(0.0f);
-	m_player->m_drone_model->SetStateLinearSpeed2(0.0f);
-	m_player->m_drone_model->SetStatePhi(0.0f);
-	m_player->m_drone_model->SetStateAngularVelocity(0.0f);
+	m_player->m_drone_model->Drone_SetStateMotorSpeed1(0.0f);
+	m_player->m_drone_model->Drone_SetStateMotorSpeed2(0.0f);
+	m_player->m_drone_model->Drone_SetStatePosition1(340.0f);
+	m_player->m_drone_model->Drone_SetStatePosition2(100.0f);
+	m_player->m_drone_model->Drone_SetStateLinearSpeed1(0.0f);
+	m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+	m_player->m_drone_model->Drone_SetStatePhi(0.0f);
+	m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
 
 	m_state = GAME_ACTIVE;
 }
@@ -111,114 +123,94 @@ void Game::Update(bool param_tick)
 	std::cout << "Position Y: " << m_player->GetPosition().y << std::endl;
 }
 
+void Game::SetMouseClick(glm::vec2 param_mouse_click)
+{
+	m_mouse_click_position = param_mouse_click;
+}
+
+glm::vec2 Game::GetMouseClick()
+{
+	return m_mouse_click_position;
+}
+
 void Game::ProcessInput(GLfloat param_delta_time)
 {
     if (this->m_state == GAME_ACTIVE)
     {
 
-		if (this->m_keys[GLFW_KEY_Q])
-        {
-			m_player->m_drone_model->SetStateMotorSpeed2(1000);
-        }
 		if (this->m_keys[GLFW_KEY_E])
         {
-			m_player->m_drone_model->SetStateMotorSpeed1(1000);
+			m_player->m_drone_model->Drone_SetStateMotorSpeed2(1000);
         }
+		if (this->m_keys[GLFW_KEY_Q])
+        {
+			m_player->m_drone_model->Drone_SetStateMotorSpeed1(1000);
+        }
+
+		if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+		{
+			GLfloat x_offset;
+			GLfloat y_offset;
+
+			x_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
+			y_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
+
+			m_waypoint->SetPosition(glm::vec2(GLfloat(this->GetMouseClick().x) - x_offset, GLfloat(this->GetMouseClick().y) - y_offset));
+			m_player->m_drone_model->Control_SetWaypoint(this->m_mouse_click_position);
+			m_player->m_drone_model->Control_CalculateError();
+
+			GLfloat kp = 0.5f;;
+
+			std::vector<GLfloat> initial_command {
+				m_player->m_drone_model->Control_GetError().x * -kp, 
+				m_player->m_drone_model->Control_GetError().y * kp};
+
+			// m_player->m_drone_model->Drone_SetCommand(initial_command);
+		}
 
 		m_player->m_drone_model->SetDeltaTime(param_delta_time);
 		glm::vec2 new_position(
-			m_player->m_drone_model->GetStateVector()[2],
-			m_player->m_drone_model->GetStateVector()[3]);
+			m_player->m_drone_model->Drone_GetStateVector()[2],
+			m_player->m_drone_model->Drone_GetStateVector()[3]);
 		
 		m_player->SetPosition(new_position);
 
-#if !GRAVITY
-        GLfloat velocity = m_player->GetVelocity().x * param_delta_time; 
-		glm::vec2 new_position;
+		if (Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]) >= 360.0f || 
+		    Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]) <= -360.0f)
+		{
+			m_player->m_drone_model->Drone_SetStatePhi(0.0f);
+		}
 
-        if (this->m_keys[GLFW_KEY_A])
-        {
-            if (m_player->GetPosition().x >= 0.0f)
-            {
-				new_position = glm::vec2(
-					m_player->GetPosition().x - velocity, 
-					m_player->GetPosition().y);
-
-				m_player->SetPosition(new_position);
-			}
-        }
-
-        if (this->m_keys[GLFW_KEY_D])
-        {
-            if (m_player->GetPosition().x <= this->m_width - m_player->GetSpriteSize().x)
-			{
-				new_position = glm::vec2(
-					m_player->GetPosition().x + velocity, 
-					m_player->GetPosition().y);
-
-				m_player->SetPosition(new_position);
-			}
-        }
-
-		if (this->m_keys[GLFW_KEY_W])
-        {
-            if (m_player->GetPosition().y >= 0.0f)
-			{
-				new_position = glm::vec2(
-					m_player->GetPosition().x, 
-					m_player->GetPosition().y - velocity);
-
-				m_player->SetPosition(new_position);
-			}
-        }
-
-        if (this->m_keys[GLFW_KEY_S])
-        {
-            if (!m_floor_colision)
-			{
-				new_position = glm::vec2(
-					m_player->GetPosition().x, 
-					m_player->GetPosition().y + velocity);
-
-				m_player->SetPosition(new_position);
-			}
-			
-        }
-		if (this->m_keys[GLFW_KEY_Q])
-        {
-            if (m_player->GetRotation() >= -1.0f * (m_player->GetMaxRotation()))
-			{
-				m_player->SetRotation((m_player->GetRotation() - 2.0f / param_delta_time * DEG_TO_RAD));
-			}
-        }
-
-		if (this->m_keys[GLFW_KEY_E])
-        {
-            if (m_player->GetRotation() <= (m_player->GetMaxRotation()))
-			{
-				m_player->SetRotation((m_player->GetRotation() + 2.0f / param_delta_time * DEG_TO_RAD));
-			}
-        }
-#endif
 		Physics::FourthOrder::UpdatePhysics(m_player->m_drone_model);
-		std::cout << "Calculated w1: " << m_player->m_drone_model->GetStateVector()[0] << std::endl;
-		std::cout << "Calculated w2: " << m_player->m_drone_model->GetStateVector()[1] << std::endl;
-		std::cout << "Calculated r1: " << m_player->m_drone_model->GetStateVector()[2] << std::endl;
-		std::cout << "Calculated r2: " << m_player->m_drone_model->GetStateVector()[3] << std::endl;
-		std::cout << "Calculated v1: " << m_player->m_drone_model->GetStateVector()[4] << std::endl;
-		std::cout << "Calculated v2: " << m_player->m_drone_model->GetStateVector()[5] << std::endl;
-		std::cout << "Calculated phi: " << Math::Conversion::RadiansToDegrees(m_player->m_drone_model->GetStateVector()[6]) << std::endl;
-		std::cout << "Calculated omega: " << (m_player->m_drone_model->GetStateVector()[7]) << std::endl;
+		// std::cout << "Calculated w1: " << m_player->m_drone_model->Drone_GetStateVector()[0] << std::endl;
+		// std::cout << "Calculated w2: " << m_player->m_drone_model->Drone_GetStateVector()[1] << std::endl;
+		// std::cout << "Calculated r1: " << m_player->m_drone_model->Drone_GetStateVector()[2] << std::endl;
+		// std::cout << "Calculated r2: " << m_player->m_drone_model->Drone_GetStateVector()[3] << std::endl;
+		// std::cout << "Calculated v1: " << m_player->m_drone_model->Drone_GetStateVector()[4] << std::endl;
+		// std::cout << "Calculated v2: " << m_player->m_drone_model->Drone_GetStateVector()[5] << std::endl;
+		// std::cout << "Calculated phi: " << Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]) << std::endl;
+		// std::cout << "Calculated omega: " << (m_player->m_drone_model->Drone_GetStateVector()[7]) << std::endl;
 
-		m_player->SetRotation(Math::Conversion::RadiansToDegrees(m_player->m_drone_model->GetStateVector()[6]));
-    
+		m_player->SetRotation(Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]));
+
+		bool impact = false;
+
+		if (m_floor_colision && (m_drone_model->Drone_GetGravity() == 0.0f))
+			impact = true;
+
 		if (m_floor_colision)
 		{
-			m_player->m_drone_model->SetStateLinearSpeed2(0.0f);
-
-			if ((this->m_keys[GLFW_KEY_E]) && (this->m_keys[GLFW_KEY_E]))
+			if (!impact)
 			{
-				m_player->m_drone_model->SetStateLinearSpeed2(-10.0f);
+				m_drone_model->Drone_SetGravity(0.0f);
+				m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+			}
+		}
+		else
+		{
+			if (m_drone_model->Drone_GetGravity() == 0.0f)
+			{
+				m_drone_model->Drone_SetGravity(9.81f * -100.0f);
 			}
 		}
 	}
@@ -228,11 +220,13 @@ void Game::Render()
 {
 	if(this->m_state == GAME_ACTIVE)
     {
-        m_renderer->DrawSprite(
+        m_renderer->DrawBackground(
 			ResourceManager::GetTexture("background"), 
             glm::vec2(0.0f, 0.0f), 
 			glm::vec2(this->m_width, this->m_height), 
 			0.0f);
+		
+		m_waypoint->Draw(*this->m_renderer);
 
 		if (!m_floor_colision)
 		{

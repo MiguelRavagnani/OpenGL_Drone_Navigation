@@ -86,6 +86,20 @@ public:
      */
     bool GetKeys(bool param_key);
 
+    /**
+     * @brief Set the Mouse Click 
+     * 
+     * @param param_mouse_click ...
+     */
+    void SetMouseClick(glm::vec2 param_mouse_click);
+
+    /**
+     * @brief Get the Mouse Click 
+     * 
+     * @return glm::vec2 ...
+     */
+    glm::vec2 GetMouseClick();
+
     /*--------------------------------------------*/
     bool m_keys[1024];
 
@@ -96,22 +110,35 @@ private:
      * @brief TODO: Fill
      */
     enum EnGameState {
-        GAME_ACTIVE,        // TODO: Fill
-        GAME_MENU,          // TODO: Fill
-        GAME_WIN            // TODO: Fill
+        GAME_ACTIVE,          // TODO: Fill
+        GAME_MENU,            // TODO: Fill
+        GAME_WIN              // TODO: Fill
+    }; 
+
+    /**
+     * @brief TODO: Fill
+     */
+    enum EnGameLoop {
+        GAME_MENU,            // TODO: Fill
+        GAME_LOOP_AUTOMATIC,  // TODO: Fill
+        GAME_LOOP_MANUEAL     // TODO: Fill
     }; 
 
     /*--------------------------------------------*/
-    EnGameState m_state;	
+    EnGameState m_state;
+    EnGameLoop m_loop;	
 
     unsigned int m_width;
     unsigned int m_height;
 
     bool m_tick;
 
+    glm::vec2 m_mouse_click_position;
+
     /*--------------------------------------------*/
     /* Please, remember to delete it in destructor*/
     GameObject* m_player;
+    GameObject* m_waypoint;
     SpriteRenderer  *m_renderer;
     SpriteSheetRenderer *m_sheet_renderer;
     ScreenColision *m_screen_colision;

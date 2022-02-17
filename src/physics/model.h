@@ -85,153 +85,11 @@ public:
     void UpdatePhysics();
 
     /**
-     * @brief Set the State Motor Speed object
-     * 
-     * @param param_w1 ...
-     */
-    void SetStateMotorSpeed1(GLfloat param_w1);
-
-    /**
-     * @brief Set the State Motor Speed object
-     * 
-     * @param param_w2 ...
-     */
-    void SetStateMotorSpeed2(GLfloat param_w2);
-
-    /**
-     * @brief Set the State Position object
-     * 
-     * @param param_r1 ...
-     */
-    void SetStatePosition1(GLfloat param_r1);
-
-    /**
-     * @brief Set the State Position object
-     * 
-     * @param param_r2 ...
-     */
-    void SetStatePosition2(GLfloat param_r2);
-
-    /**
-     * @brief Set the State Linear Speed object
-     * 
-     * @param param_v1 ...
-     */
-    void SetStateLinearSpeed1(GLfloat param_v1);
-
-    /**
-     * @brief Set the State Linear Speed object
-     * 
-     * @param param_v2 ...
-     */
-    void SetStateLinearSpeed2(GLfloat param_v2);
-
-    /**
-     * @brief Set the State Phi object
-     * 
-     * @param param_phi ...
-     */
-    void SetStatePhi(GLfloat param_phi);
-
-    /**
-     * @brief Set the State Angular Velocity object
-     * 
-     * @param param_omega ...
-     */
-    void SetStateAngularVelocity(GLfloat param_omega);
-
-    /**
-     * @brief Set the Command object
-     * 
-     * @param param_command ...
-     */
-    void SetCommand(std::vector<GLfloat> param_command);
-
-    /**
      * @brief Set the Delta Time object
      * 
      * @param param_delta_time ...
      */
     void SetDeltaTime(GLfloat param_delta_time);
-
-    /*Get-----------------------------------------*/
-
-    /**
-     * @brief Get the State Motor Speed object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStateMotorSpeed1();
-
-    /**
-     * @brief Get the State Motor Speed object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStateMotorSpeed2();
-
-    /**
-     * @brief Get the State Position object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStatePosition1();
-
-    /**
-     * @brief Get the State Position object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStatePosition2();
-
-    /**
-     * @brief Get the State Linear Speed object
-     * 
-     * @return <GLfloat ...
-     */
-    GLfloat GetStateLinearSpeed1();
-
-    /**
-     * @brief Get the State Linear Speed object
-     * 
-     * @return <GLfloat ...
-     */
-    GLfloat GetStateLinearSpeed2();
-
-    /**
-     * @brief Get the State Phi object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStatePhi();
-    
-    /**
-     * @brief Get the State Angular Velocity object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetStateAngularVelocity();
-
-    /**
-     * @brief Get the State Vector object
-     * 
-     * @return std::vector<GLfloat> ...
-     */
-    std::vector<GLfloat> GetStateVector();
-
-    /**
-     * @brief Get the Command object
-     * 
-     * @return std::vector<GLfloat> ...
-     */
-    std::vector<GLfloat> GetCommand();
-
-    /**
-     * @brief Get the Integration Step object
-     * 
-     * @return GLfloat ...
-     */
-    GLfloat GetIntegrationStep();
 
     /**
      * @brief Get the Delta Time object
@@ -239,6 +97,12 @@ public:
      * @return GLfloat ...
      */
     GLfloat GetDeltaTime();
+
+    /*--------------------------------------------*/
+    /*           Drone Model Parameters           */
+    /*--------------------------------------------*/
+
+    /*Set-----------------------------------------*/
 
     struct DroneModelParameters
     {
@@ -270,10 +134,230 @@ public:
         std::vector<GLfloat> command;
     };
 
+    /**
+     * @brief ...
+     * 
+     * @param param_gravity ...
+     */
+    void Drone_SetGravity(GLfloat param_gravity);
+
+    /**
+     * @brief ...
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetGravity();
+
+    /**
+     * @brief Set the State Motor Speed object
+     * 
+     * @param param_w1 ...
+     */
+    void Drone_SetStateMotorSpeed1(GLfloat param_w1);
+
+    /**
+     * @brief Set the State Motor Speed object
+     * 
+     * @param param_w2 ...
+     */
+    void Drone_SetStateMotorSpeed2(GLfloat param_w2);
+
+    /**
+     * @brief Set the State Position object
+     * 
+     * @param param_r1 ...
+     */
+    void Drone_SetStatePosition1(GLfloat param_r1);
+
+    /**
+     * @brief Set the State Position object
+     * 
+     * @param param_r2 ...
+     */
+    void Drone_SetStatePosition2(GLfloat param_r2);
+
+    /**
+     * @brief Set the State Linear Speed object
+     * 
+     * @param param_v1 ...
+     */
+    void Drone_SetStateLinearSpeed1(GLfloat param_v1);
+
+    /**
+     * @brief Set the State Linear Speed object
+     * 
+     * @param param_v2 ...
+     */
+    void Drone_SetStateLinearSpeed2(GLfloat param_v2);
+
+    /**
+     * @brief Set the State Phi object
+     * 
+     * @param param_phi ...
+     */
+    void Drone_SetStatePhi(GLfloat param_phi);
+
+    /**
+     * @brief Set the State Angular Velocity object
+     * 
+     * @param param_omega ...
+     */
+    void Drone_SetStateAngularVelocity(GLfloat param_omega);
+
+    /**
+     * @brief Set the Command object
+     * 
+     * @param param_command ...
+     */
+    void Drone_SetCommand(std::vector<GLfloat> param_command);
+
+    /*Get-----------------------------------------*/
+
+    /**
+     * @brief Get the State Motor Speed object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStateMotorSpeed1();
+
+    /**
+     * @brief Get the State Motor Speed object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStateMotorSpeed2();
+
+    /**
+     * @brief Get the State Position object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStatePosition1();
+
+    /**
+     * @brief Get the State Position object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStatePosition2();
+
+    /**
+     * @brief Get the State Linear Speed object
+     * 
+     * @return <GLfloat ...
+     */
+    GLfloat Drone_GetStateLinearSpeed1();
+
+    /**
+     * @brief Get the State Linear Speed object
+     * 
+     * @return <GLfloat ...
+     */
+    GLfloat Drone_GetStateLinearSpeed2();
+
+    /**
+     * @brief Get the State Phi object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStatePhi();
+    
+    /**
+     * @brief Get the State Angular Velocity object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetStateAngularVelocity();
+
+    /**
+     * @brief Get the State Vector object
+     * 
+     * @return std::vector<GLfloat> ...
+     */
+    std::vector<GLfloat> Drone_GetStateVector();
+
+    /**
+     * @brief Get the Command object
+     * 
+     * @return std::vector<GLfloat> ...
+     */
+    std::vector<GLfloat> Drone_GetCommand();
+
+    /**
+     * @brief Get the Integration Step object
+     * 
+     * @return GLfloat ...
+     */
+    GLfloat Drone_GetIntegrationStep();
+
+    /*--------------------------------------------*/
+    /*         Drone Control Parameters           */
+    /*--------------------------------------------*/
+
+    struct DroneControlParameters
+    {
+        glm::vec2 waypoint;
+        glm::vec2 error;
+    };
+
+    /**
+     * @brief ...
+     * 
+     */
+    void Control_CalculateError();
+
+    /**
+     * @brief ...
+     * 
+     * @param param_waypoint ...
+     */
+    void Control_SetWaypoint(glm::vec2 param_waypoint);
+
+    /**
+     * @brief ...
+     * 
+     * @param param_error ...
+     */
+    void Control_SetError(glm::vec2 param_error);
+
+    /**
+     * @brief ...
+     * 
+     * @return glm::vec2 ...
+     */
+    glm::vec2 Control_GetWaypoint();
+
+    /**
+     * @brief ...
+     * 
+     * @return glm::vec2 ...
+     */
+    glm::vec2 Control_GetError();
+
+    /*--------------------------------------------*/
+    /*       Drone Simulation Parameters          */
+    /*--------------------------------------------*/
+
+    struct DroneSimulationParameters
+    {
+        GLfloat integration_setp;
+        GLfloat max_time;
+        GLfloat time_step_arrange;
+        GLfloat time_step_arrange_size;
+
+        std::vector<glm::vec2> state_vector;
+
+        std::vector<GLfloat> input_control_vector;
+        std::vector<GLfloat> action_control_vector;
+        std::vector<GLfloat> output_control_vector;
+    };
+
 private:
     /*--------------------------------------------*/
 
     DroneModelParameters m_drone_parameters;
+    DroneControlParameters m_control_parameters;
+    DroneSimulationParameters m_simulation_parameters;
 
     GLfloat m_delta_time;
     

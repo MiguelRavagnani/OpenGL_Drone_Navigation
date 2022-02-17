@@ -10,6 +10,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -38,6 +39,7 @@ int main(int argc, char *argv[])
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -111,6 +113,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             Drone.m_keys[key] = true;
         else if (action == GLFW_RELEASE)
             Drone.m_keys[key] = false;
+    }
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        double x_position;
+        double y_position;
+
+        glfwGetCursorPos(window, &x_position, &y_position);
+
+        if (action == GLFW_PRESS)
+            Drone.m_keys[button] = true;
+        else if (action == GLFW_RELEASE)
+            Drone.m_keys[button] = false;
+
+        Drone.SetMouseClick(glm::vec2(x_position, y_position));
+        std::cout << "Cursor x: " << x_position << " Cursor y: " << y_position << "" <<std::endl;
     }
 }
 

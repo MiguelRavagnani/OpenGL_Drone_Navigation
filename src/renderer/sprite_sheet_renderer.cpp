@@ -32,7 +32,7 @@ void SpriteSheetRenderer::DrawSheet(
     // std::cout << param_position.x << " | "<< param_sprite_size.x << std::endl;
     // std::cout << param_position.y << " | "<< param_sprite_size.y << std::endl;
 
-    model = glm::translate(model, glm::vec3(param_sprite_size.x * 0.5f, param_sprite_size.y * 0.5f, 0.0f));
+    // model = glm::translate(model, glm::vec3(param_sprite_size.x * 0.5f, param_sprite_size.y * 0.5f, 0.0f));
     model = glm::rotate(model, glm::radians(param_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-param_sprite_size.x * 0.5f, -param_sprite_size.y * 0.5f, 0.0f));
 

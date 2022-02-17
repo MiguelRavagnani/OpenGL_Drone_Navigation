@@ -69,7 +69,7 @@ std::vector<GLfloat> Model::StateVector(
     /* Control force */
     glm::vec2 control_force = glm::vec2(
         0.0f,
-        force_1[0]*-1600.0f + force_2[0]*-1600.0f);
+        force_1[0]*-3000.0f + force_2[0]*-3000.0f);
 
     /*  Rotation matrix */
     glm::mat2 rotation_matrix = glm::mat2(
@@ -108,47 +108,57 @@ void Model::UpdatePhysics()
 
 }
 
-void Model::SetStateMotorSpeed1(GLfloat param_w1)
+void Model::Drone_SetGravity(GLfloat param_gravity)
+{
+    m_drone_parameters.gravity_acc = param_gravity;
+}
+
+GLfloat Model::Drone_GetGravity()
+{
+    return m_drone_parameters.gravity_acc;
+}
+
+void Model::Drone_SetStateMotorSpeed1(GLfloat param_w1)
 {
     m_drone_parameters.state_vector[0] = param_w1;
 }
 
-void Model::SetStateMotorSpeed2(GLfloat param_w2)
+void Model::Drone_SetStateMotorSpeed2(GLfloat param_w2)
 {
     m_drone_parameters.state_vector[1] = param_w2;
 }
 
-void Model::SetStatePosition1(GLfloat param_r1)
+void Model::Drone_SetStatePosition1(GLfloat param_r1)
 {
     m_drone_parameters.state_vector[2] = param_r1;
 }
 
-void Model::SetStatePosition2(GLfloat param_r2)
+void Model::Drone_SetStatePosition2(GLfloat param_r2)
 {
     m_drone_parameters.state_vector[3] = param_r2;
 }
 
-void Model::SetStateLinearSpeed1(GLfloat param_v1)
+void Model::Drone_SetStateLinearSpeed1(GLfloat param_v1)
 {
     m_drone_parameters.state_vector[4] = param_v1;
 }
 
-void Model::SetStateLinearSpeed2(GLfloat param_v2)
+void Model::Drone_SetStateLinearSpeed2(GLfloat param_v2)
 {
     m_drone_parameters.state_vector[5] = param_v2;
 }
 
-void Model::SetStatePhi(GLfloat param_phi)
+void Model::Drone_SetStatePhi(GLfloat param_phi)
 {
     m_drone_parameters.state_vector[6] = param_phi;
 }
 
-void Model::SetStateAngularVelocity(GLfloat param_omega)
+void Model::Drone_SetStateAngularVelocity(GLfloat param_omega)
 {
     m_drone_parameters.state_vector[7] = param_omega;
 }
 
-void Model::SetCommand(std::vector<GLfloat> param_command)
+void Model::Drone_SetCommand(std::vector<GLfloat> param_command)
 {
     m_drone_parameters.command = param_command;
 }
@@ -158,57 +168,57 @@ void Model::SetDeltaTime(GLfloat param_delta_time)
     m_delta_time = param_delta_time;
 }
 
-GLfloat Model::GetStateMotorSpeed1()
+GLfloat Model::Drone_GetStateMotorSpeed1()
 {
     return m_drone_parameters.state_vector[0];
 }
 
-GLfloat Model::GetStateMotorSpeed2()
+GLfloat Model::Drone_GetStateMotorSpeed2()
 {
     return m_drone_parameters.state_vector[1];
 }
 
-GLfloat Model::GetStatePosition1()
+GLfloat Model::Drone_GetStatePosition1()
 {
     return m_drone_parameters.state_vector[2];
 }
 
-GLfloat Model::GetStatePosition2()
+GLfloat Model::Drone_GetStatePosition2()
 {
     return m_drone_parameters.state_vector[3];
 }
 
-GLfloat Model::GetStateLinearSpeed1()
+GLfloat Model::Drone_GetStateLinearSpeed1()
 {
     return m_drone_parameters.state_vector[4];
 }
 
-GLfloat Model::GetStateLinearSpeed2()
+GLfloat Model::Drone_GetStateLinearSpeed2()
 {
     return m_drone_parameters.state_vector[5];
 }
 
-GLfloat Model::GetStatePhi()
+GLfloat Model::Drone_GetStatePhi()
 {
     return m_drone_parameters.state_vector[6];
 }
 
-GLfloat Model::GetStateAngularVelocity()
+GLfloat Model::Drone_GetStateAngularVelocity()
 {
     return m_drone_parameters.state_vector[7];
 }
 
-std::vector<GLfloat> Model::GetStateVector()
+std::vector<GLfloat> Model::Drone_GetStateVector()
 {
     return m_drone_parameters.state_vector;
 }
 
-GLfloat Model::GetIntegrationStep()
+GLfloat Model::Drone_GetIntegrationStep()
 {
     return m_drone_parameters.integration_step;
 }
 
-std::vector<GLfloat> Model::GetCommand()
+std::vector<GLfloat> Model::Drone_GetCommand()
 {
     return m_drone_parameters.command;
 }
@@ -216,4 +226,32 @@ std::vector<GLfloat> Model::GetCommand()
 GLfloat Model::GetDeltaTime()
 {
     return m_delta_time;
+}
+
+void Model::Control_SetWaypoint(glm::vec2 param_waypoint)
+{
+    m_control_parameters.waypoint = param_waypoint;
+}
+
+void Model::Control_SetError(glm::vec2 param_error)
+{
+    m_control_parameters.error = param_error;
+}
+
+glm::vec2 Model::Control_GetWaypoint()
+{
+    return m_control_parameters.waypoint;
+}
+
+glm::vec2 Model::Control_GetError()
+{
+    return m_control_parameters.error;
+}
+
+void Model::Control_CalculateError()
+{
+    m_control_parameters.error.x = m_control_parameters.waypoint.x - this->Drone_GetStatePosition1();
+    m_control_parameters.error.y = m_control_parameters.waypoint.y - this->Drone_GetStatePosition2();
+
+    std::cout << "Error: (" << m_control_parameters.error.x << ", " << m_control_parameters.error.y << ")" << std::endl;
 }
