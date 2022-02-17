@@ -87,6 +87,15 @@ public:
         SpriteSheetRenderer &param_renderer,
         bool param_tick);
 
+    /**
+     * @brief ...
+     * 
+     * @param param_input ...
+     * @return true ...
+     * @return false ...
+     */
+    bool BoudingBox(glm::vec2 param_input);
+
     /*Setters-------------------------------------*/
 
     /**
@@ -244,6 +253,8 @@ private:
     Texture2D m_sprite;
 
     GLfloat m_frame;
+
+    glm::vec4 m_bouding_box;
 };
 
 #endif //_GAME_OBJECT_

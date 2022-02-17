@@ -111,7 +111,6 @@ private:
      */
     enum EnGameState {
         GAME_ACTIVE,          // TODO: Fill
-        GAME_MENU,            // TODO: Fill
         GAME_WIN              // TODO: Fill
     }; 
 
@@ -121,7 +120,7 @@ private:
     enum EnGameLoop {
         GAME_MENU,            // TODO: Fill
         GAME_LOOP_AUTOMATIC,  // TODO: Fill
-        GAME_LOOP_MANUEAL     // TODO: Fill
+        GAME_LOOP_MANUAL     // TODO: Fill
     }; 
 
     /*--------------------------------------------*/
@@ -139,6 +138,11 @@ private:
     /* Please, remember to delete it in destructor*/
     GameObject* m_player;
     GameObject* m_waypoint;
+	GameObject* m_button_automatic;
+	GameObject* m_button_manual;
+	GameObject* m_button_menu;
+	GameObject* m_button_menu_close;
+
     SpriteRenderer  *m_renderer;
     SpriteSheetRenderer *m_sheet_renderer;
     ScreenColision *m_screen_colision;

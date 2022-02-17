@@ -24,6 +24,10 @@ Game::~Game()
 	delete m_renderer;
 	delete m_sheet_renderer;
 	delete m_screen_colision;
+	delete m_button_automatic;
+	delete m_button_manual;
+	delete m_button_menu;
+	delete m_button_menu_close;
 }
 
 void Game::Init()
@@ -49,19 +53,23 @@ void Game::Init()
 	m_sheet_renderer = new SpriteSheetRenderer(ResourceManager::GetShader("sprite"));
 
     ResourceManager::LoadTexture("../textures/drone_frame.png", true, "player");
+	ResourceManager::LoadTexture("../textures/button_automatic.png", true, "button_automatic");
+	ResourceManager::LoadTexture("../textures/button_manual.png", true, "button_manual");
+	ResourceManager::LoadTexture("../textures/button_menu.png", true, "button_menu");
+	ResourceManager::LoadTexture("../textures/button_menu_close.png", true, "button_menu_close");
 	ResourceManager::LoadTexture("../textures/waypoint_1.png", true, "waypoint");
 	ResourceManager::LoadTexture("../textures/drone_still.png", true, "player_still");
 	ResourceManager::LoadTexture("../textures/bg_2.png", true, "background");
 
-	glm::vec2 player_sheet_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f * 5.0f);
-	glm::vec2 player_sprite_size((m_width / 8.0f) * 1.0f, (m_width / 8.0f) * 1.0f);
+	glm::vec2 player_sheet_size((m_width / 8.0f), (m_width / 8.0f)* 5.0f);
+	glm::vec2 player_sprite_size((m_width / 8.0f), (m_width / 8.0f));
 
 	glm::vec2 player_initial_velocity(100.0f, 100.0f);
 
 	glm::vec3 player_color(1.0f);
 
 	glm::vec2 player_inital_position = glm::vec2(
-        m_width / 2.0f - player_sheet_size.x / 2.0f, 
+        m_width / 2.0f + player_sheet_size.x / 2.0f, 
         m_height - player_sheet_size.y);
 
 	m_player = new GameObject(
@@ -79,12 +87,49 @@ void Game::Init()
 		ResourceManager::GetTexture("waypoint"),
 		glm::vec3(1.0f),
 		glm::vec2(0.0f));
+	
+	glm::vec2 button_size(m_width * 3.0f / 8.0f, (m_width/ 8.0f));
+	glm::vec2 button_automatic_position(m_width / 2.0f, m_height * 0.60f);
+	glm::vec2 button_manual_position(m_width / 2.0f, m_height * 0.30f);
+	glm::vec2 m_button_menu_position(m_width * 0.04f, m_height * 0.055f);
+
+	m_button_automatic = new GameObject(
+		button_automatic_position,
+		button_size,
+		button_size,
+		ResourceManager::GetTexture("button_automatic"),
+		glm::vec3(1.0f),
+		glm::vec2(0.0f));
+
+	m_button_manual = new GameObject(
+		button_manual_position,
+		button_size,
+		button_size,
+		ResourceManager::GetTexture("button_manual"),
+		glm::vec3(1.0f),
+		glm::vec2(0.0f));
+
+	m_button_menu = new GameObject(
+		m_button_menu_position,
+		glm::vec2(m_width / 16.0f),
+		glm::vec2(m_width / 16.0f),
+		ResourceManager::GetTexture("button_menu"),
+		glm::vec3(1.0f),
+		glm::vec2(0.0f));
+
+	m_button_menu_close = new GameObject(
+		m_button_menu_position,
+		glm::vec2(m_width / 16.0f),
+		glm::vec2(m_width / 16.0f),
+		ResourceManager::GetTexture("button_menu_close"),
+		glm::vec3(1.0f),
+		glm::vec2(0.0f));
 
 	m_player->SetMaxRotation(45.0f);
 
 	GLfloat colision_height_percentage = (1.0f / 16.0f);
 
-	std::cout << m_height - colision_height_percentage * m_height << std::endl;
+	// std::cout << m_height - colision_height_percentage * m_height << std::endl;
 
 	m_screen_colision = new ScreenColision(
         this->m_width, 
@@ -106,21 +151,22 @@ void Game::Init()
 
 	m_player->m_drone_model->Drone_SetStateMotorSpeed1(0.0f);
 	m_player->m_drone_model->Drone_SetStateMotorSpeed2(0.0f);
-	m_player->m_drone_model->Drone_SetStatePosition1(340.0f);
-	m_player->m_drone_model->Drone_SetStatePosition2(100.0f);
+	m_player->m_drone_model->Drone_SetStatePosition1(m_width / 2.0f);
+	m_player->m_drone_model->Drone_SetStatePosition2(m_height * 0.78f);
 	m_player->m_drone_model->Drone_SetStateLinearSpeed1(0.0f);
 	m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
 	m_player->m_drone_model->Drone_SetStatePhi(0.0f);
 	m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
 
-	m_state = GAME_ACTIVE;
+	this->m_loop = GAME_MENU;
+	this->m_state = GAME_ACTIVE;
 }
 
 void Game::Update(bool param_tick)
 {
 	m_floor_colision = m_screen_colision->DetectColisionY(m_player->GetPosition());
 	m_tick = param_tick;
-	std::cout << "Position Y: " << m_player->GetPosition().y << std::endl;
+	// std::cout << "Position Y: " << m_player->GetPosition().y << std::endl;
 }
 
 void Game::SetMouseClick(glm::vec2 param_mouse_click)
@@ -137,36 +183,111 @@ void Game::ProcessInput(GLfloat param_delta_time)
 {
     if (this->m_state == GAME_ACTIVE)
     {
-
-		if (this->m_keys[GLFW_KEY_E])
-        {
-			m_player->m_drone_model->Drone_SetStateMotorSpeed2(1000);
-        }
-		if (this->m_keys[GLFW_KEY_Q])
-        {
-			m_player->m_drone_model->Drone_SetStateMotorSpeed1(1000);
-        }
-
-		if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+		switch (this->m_loop)
 		{
-			GLfloat x_offset;
-			GLfloat y_offset;
+		case GAME_MENU:
+			{
+				if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+				{
+					if (m_button_manual->BoudingBox(this->GetMouseClick()))
+					{
+						std::cout << "Manual" << std::endl;
+						m_player->m_drone_model->Drone_SetStateMotorSpeed1(0.0f);
+						m_player->m_drone_model->Drone_SetStateMotorSpeed2(0.0f);
+						m_player->m_drone_model->Drone_SetStatePosition1(m_width / 2.0f);
+						m_player->m_drone_model->Drone_SetStatePosition2(m_height * 0.78f);
+						m_player->m_drone_model->Drone_SetStateLinearSpeed1(0.0f);
+						m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+						m_player->m_drone_model->Drone_SetStatePhi(0.0f);
+						m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
+						this->m_loop = GAME_LOOP_MANUAL;
+					}
+					
+					else if (m_button_automatic->BoudingBox(this->GetMouseClick()))
+					{
+						std::cout << "Automatic" << std::endl;
+						this->m_loop = GAME_LOOP_AUTOMATIC;
+						m_player->m_drone_model->Drone_SetStateMotorSpeed1(0.0f);
+						m_player->m_drone_model->Drone_SetStateMotorSpeed2(0.0f);
+						m_player->m_drone_model->Drone_SetStatePosition1(m_width / 2.0f);
+						m_player->m_drone_model->Drone_SetStatePosition2(m_height * 0.78f);
+						m_player->m_drone_model->Drone_SetStateLinearSpeed1(0.0f);
+						m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+						m_player->m_drone_model->Drone_SetStatePhi(0.0f);
+						m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
+					}
 
-			x_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
-			y_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
+					else if (m_button_menu_close->BoudingBox(this->GetMouseClick()))
+					{
+						std::cout << "Close menu" << std::endl;
+						this->m_loop = GAME_LOOP_AUTOMATIC;
+					}
+				}
+				this->m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
+				break;
+			}
 
-			m_waypoint->SetPosition(glm::vec2(GLfloat(this->GetMouseClick().x) - x_offset, GLfloat(this->GetMouseClick().y) - y_offset));
-			m_player->m_drone_model->Control_SetWaypoint(this->m_mouse_click_position);
-			m_player->m_drone_model->Control_CalculateError();
+		case GAME_LOOP_MANUAL:
+			{
+				if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+				{
+					if (m_button_menu->BoudingBox(this->GetMouseClick()))
+					{
+						std::cout << "Open Menu" << std::endl;
+						this->m_loop = GAME_MENU;
+						this->m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
+						break;
+					}
+				}
 
-			GLfloat kp = 0.5f;;
+				if (this->m_keys[GLFW_KEY_E])
+				{
+					m_player->m_drone_model->Drone_SetStateMotorSpeed2(1000);
+				}
+				if (this->m_keys[GLFW_KEY_Q])
+				{
+					m_player->m_drone_model->Drone_SetStateMotorSpeed1(1000);
+				}
+				break;
+			}
 
-			std::vector<GLfloat> initial_command {
-				m_player->m_drone_model->Control_GetError().x * -kp, 
-				m_player->m_drone_model->Control_GetError().y * kp};
+		case GAME_LOOP_AUTOMATIC:
+			{
+				if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+				{
+					if (m_button_menu->BoudingBox(this->GetMouseClick()))
+					{
+						std::cout << "Open Menu" << std::endl;
+						this->m_loop = GAME_MENU;
+						this->m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
+						break;
+					}
+				}
+				if (this->m_keys[GLFW_MOUSE_BUTTON_LEFT])
+				{
+					GLfloat x_offset;
+					GLfloat y_offset;
 
-			// m_player->m_drone_model->Drone_SetCommand(initial_command);
+					x_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
+					y_offset = 0.0f;//(32.0f * 3.0f / 2.0f);
+
+					m_waypoint->SetPosition(glm::vec2(GLfloat(this->GetMouseClick().x) - x_offset, GLfloat(this->GetMouseClick().y) - y_offset));
+					m_player->m_drone_model->Control_SetWaypoint(this->m_mouse_click_position);
+					m_player->m_drone_model->Control_CalculateError();
+
+					GLfloat kp = 0.5f;;
+
+					std::vector<GLfloat> initial_command {
+						m_player->m_drone_model->Control_GetError().x * -kp, 
+						m_player->m_drone_model->Control_GetError().y * kp};
+
+					// m_player->m_drone_model->Drone_SetCommand(initial_command);
+				}
+				break;
+			}
 		}
+
+
 
 		m_player->m_drone_model->SetDeltaTime(param_delta_time);
 		glm::vec2 new_position(
@@ -226,31 +347,75 @@ void Game::Render()
 			glm::vec2(this->m_width, this->m_height), 
 			0.0f);
 		
-		m_waypoint->Draw(*this->m_renderer);
-
-		if (!m_floor_colision)
+		switch (this->m_loop)
 		{
-			glm::vec2 player_sheet_size((this->m_width / 8.0f), (this->m_width / 8.0f) * 5.0f);
-			glm::vec2 player_sprite_size((this->m_width / 8.0f), (this->m_width / 8.0f));
+		case GAME_MENU:
+			{
+				/* Render menu */
+				m_button_automatic->Draw(*this->m_renderer);
+				m_button_manual->Draw(*this->m_renderer);
+				m_button_menu_close->Draw(*this->m_renderer);
+				break;
+			}
 
-			m_player->SetSize(player_sheet_size);
+		case GAME_LOOP_MANUAL:
+			{
+				m_button_menu->Draw(*this->m_renderer);
 
-			m_player->SetSprite(ResourceManager::GetTexture("player"));
-			m_player->SetSpriteSize(player_sprite_size);
-			m_player->Draw(*this->m_sheet_renderer, m_tick);
+				if (!m_floor_colision)
+				{
+					glm::vec2 player_sheet_size((this->m_width / 8.0f), (this->m_width / 8.0f) * 5.0f);
+					glm::vec2 player_sprite_size((this->m_width / 8.0f), (this->m_width / 8.0f));
+
+					m_player->SetSize(player_sheet_size);
+
+					m_player->SetSprite(ResourceManager::GetTexture("player"));
+					m_player->SetSpriteSize(player_sprite_size);
+					m_player->Draw(*this->m_sheet_renderer, m_tick);
+				}
+				else
+				{
+					glm::vec2 player_sprite_size((this->m_width / 8.0f) * 1.0f, (this->m_width / 8.0f) * 1.0f);
+
+					m_player->SetSize(player_sprite_size);
+
+					m_player->SetSprite(ResourceManager::GetTexture("player_still"));
+					m_player->SetSpriteSize(player_sprite_size);
+					m_player->Draw(*this->m_renderer);
+				}
+				break;
+			}
+
+		case GAME_LOOP_AUTOMATIC:
+			{
+				m_button_menu->Draw(*this->m_renderer);
+				
+				if (!m_floor_colision)
+				{
+					glm::vec2 player_sheet_size((this->m_width / 8.0f), (this->m_width / 8.0f) * 5.0f);
+					glm::vec2 player_sprite_size((this->m_width / 8.0f), (this->m_width / 8.0f));
+
+					m_player->SetSize(player_sheet_size);
+
+					m_player->SetSprite(ResourceManager::GetTexture("player"));
+					m_player->SetSpriteSize(player_sprite_size);
+					m_player->Draw(*this->m_sheet_renderer, m_tick);
+				}
+				else
+				{
+					glm::vec2 player_sprite_size((this->m_width / 8.0f) * 1.0f, (this->m_width / 8.0f) * 1.0f);
+
+					m_player->SetSize(player_sprite_size);
+
+					m_player->SetSprite(ResourceManager::GetTexture("player_still"));
+					m_player->SetSpriteSize(player_sprite_size);
+					m_player->Draw(*this->m_renderer);
+				}
+				m_waypoint->Draw(*this->m_renderer);
+				break;
+			}
 		}
-		else
-		{
-			glm::vec2 player_sprite_size((this->m_width / 8.0f) * 1.0f, (this->m_width / 8.0f) * 1.0f);
+		
 
-			m_player->SetSize(player_sprite_size);
-
-			m_player->SetSprite(ResourceManager::GetTexture("player_still"));
-			m_player->SetSpriteSize(player_sprite_size);
-			m_player->Draw(*this->m_renderer);
-		}
     }
-}  
-/*Methods-------------------------------------*/
-/*Member methods*/
- 
+}

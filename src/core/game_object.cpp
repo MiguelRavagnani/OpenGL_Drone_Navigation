@@ -88,6 +88,30 @@ void GameObject::Draw(
     }
 }
 
+bool GameObject::BoudingBox(glm::vec2 param_input)
+{
+    GLfloat x_max;
+    GLfloat x_min;
+    GLfloat y_max;
+    GLfloat y_min;
+
+    x_max = m_position.x + (m_sprite_size.x / 2.0f);
+    x_min = m_position.x - (m_sprite_size.x / 2.0f);
+    y_max = m_position.y + (m_sprite_size.y / 2.0f);
+    y_min = m_position.y - (m_sprite_size.y / 2.0f);
+
+    if (((param_input.x >= x_min) && (param_input.x <= x_max)) &&
+        ((param_input.y >= y_min) && (param_input.y <= y_max)))
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
 void GameObject::SetPosition(glm::vec2 param_position)
 {
     m_position = param_position;

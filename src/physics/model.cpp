@@ -253,5 +253,6 @@ void Model::Control_CalculateError()
     m_control_parameters.error.x = m_control_parameters.waypoint.x - this->Drone_GetStatePosition1();
     m_control_parameters.error.y = m_control_parameters.waypoint.y - this->Drone_GetStatePosition2();
 
-    std::cout << "Error: (" << m_control_parameters.error.x << ", " << m_control_parameters.error.y << ")" << std::endl;
+    // std::cout << "Error: (" << m_control_parameters.error.x << ", " << m_control_parameters.error.y << ")" << std::endl;
+    // std::cout << "Mouse: (" << m_control_parameters.waypoint.x << ", " << m_control_parameters.waypoint.y << ")" << std::endl;
 }

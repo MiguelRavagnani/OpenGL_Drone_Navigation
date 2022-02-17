@@ -131,7 +131,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             Drone.m_keys[button] = false;
 
         Drone.SetMouseClick(glm::vec2(x_position, y_position));
-        std::cout << "Cursor x: " << x_position << " Cursor y: " << y_position << "" <<std::endl;
+        // std::cout << "Cursor x: " << x_position << " Cursor y: " << y_position << "" <<std::endl;
     }
 }
 
