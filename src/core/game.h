@@ -149,6 +149,7 @@ private:
     Model* m_drone_model;
 
     bool m_floor_colision;
+    bool m_is_waypoint;
 
 };
 

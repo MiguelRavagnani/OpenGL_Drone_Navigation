@@ -1,6 +1,7 @@
 #include "game.h"
 
 #define GRAVITY 1
+#define G_CONST 1.0f
 
 /*Constructors--------------------------------*/
 Game::Game()
@@ -140,7 +141,7 @@ void Game::Init()
 	m_drone_model = new Model(
         15000.0f,
         0.25f,
-        9.81f * -100.0f,
+        9.81f * -G_CONST,
         0.1f,
         0.0000001744f / 1.5f,
         0.0002f,
@@ -200,7 +201,10 @@ void Game::ProcessInput(GLfloat param_delta_time)
 						m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
 						m_player->m_drone_model->Drone_SetStatePhi(0.0f);
 						m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
+						std::vector<GLfloat> initial_command {0.0f, 0.0f};
+						m_player->m_drone_model->Drone_SetCommand(initial_command);
 						this->m_loop = GAME_LOOP_MANUAL;
+						m_is_waypoint = false;
 					}
 					
 					else if (m_button_automatic->BoudingBox(this->GetMouseClick()))
@@ -260,6 +264,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 						std::cout << "Open Menu" << std::endl;
 						this->m_loop = GAME_MENU;
 						this->m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
+						m_is_waypoint = false;
 						break;
 					}
 				}
@@ -273,15 +278,28 @@ void Game::ProcessInput(GLfloat param_delta_time)
 
 					m_waypoint->SetPosition(glm::vec2(GLfloat(this->GetMouseClick().x) - x_offset, GLfloat(this->GetMouseClick().y) - y_offset));
 					m_player->m_drone_model->Control_SetWaypoint(this->m_mouse_click_position);
-					m_player->m_drone_model->Control_CalculateError();
+					m_player->m_drone_model->Control_CalculatePositionError();
 
-					GLfloat kp = 0.5f;;
+					m_is_waypoint = true;
 
-					std::vector<GLfloat> initial_command {
-						m_player->m_drone_model->Control_GetError().x * -kp, 
-						m_player->m_drone_model->Control_GetError().y * kp};
+					GLfloat kp = 0.5f;
+					this->m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
+				}
+				else
+				{
+					std::vector<GLfloat> initial_command {0.0f, 0.0f};
+					m_player->m_drone_model->Drone_SetCommand(initial_command);
+				}
+				if (m_is_waypoint)
+				{
+					std::vector<GLfloat> initial_command {0.0f, 0.0f};
 
-					// m_player->m_drone_model->Drone_SetCommand(initial_command);
+					initial_command = m_player->m_drone_model->Control_System(m_player->m_drone_model->Drone_GetStateVector());
+
+					std::cout << "Control force w1: " << initial_command[0] << " | Control force w2: " << initial_command[1] << std::endl;
+
+					m_player->m_drone_model->Drone_SetCommand(initial_command);
+
 				}
 				break;
 			}
@@ -310,7 +328,7 @@ void Game::ProcessInput(GLfloat param_delta_time)
 		// std::cout << "Calculated v1: " << m_player->m_drone_model->Drone_GetStateVector()[4] << std::endl;
 		// std::cout << "Calculated v2: " << m_player->m_drone_model->Drone_GetStateVector()[5] << std::endl;
 		// std::cout << "Calculated phi: " << Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]) << std::endl;
-		// std::cout << "Calculated omega: " << (m_player->m_drone_model->Drone_GetStateVector()[7]) << std::endl;
+		std::cout << "Calculated omega: " << (m_player->m_drone_model->Drone_GetStateVector()[7]) << std::endl;
 
 		m_player->SetRotation(Math::Conversion::RadiansToDegrees(m_player->m_drone_model->Drone_GetStateVector()[6]));
 
@@ -331,7 +349,8 @@ void Game::ProcessInput(GLfloat param_delta_time)
 		{
 			if (m_drone_model->Drone_GetGravity() == 0.0f)
 			{
-				m_drone_model->Drone_SetGravity(9.81f * -100.0f);
+				if (!m_floor_colision)
+					m_drone_model->Drone_SetGravity(9.81f * -G_CONST);
 			}
 		}
 	}

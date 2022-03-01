@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <math.h>
+#include<algorithm>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -77,6 +78,18 @@ public:
         std::vector<GLfloat> param_time, 
         std::vector<GLfloat> *param_state_vector, 
         std::vector<GLfloat> param_input_cmd);
+
+    /**
+     * @brief Drone control system
+     * 
+     * @param param_time ...
+     * @param param_state_vector ...
+     * @param param_input_cmd ...
+     * 
+     * @return std::vector<GLfloat> ...
+     */
+    std::vector<GLfloat> Control_System(
+        std::vector<GLfloat> param_state_vector);
 
     /**
      * @brief TODO: Fill
@@ -304,7 +317,7 @@ public:
      * @brief ...
      * 
      */
-    void Control_CalculateError();
+    void Control_CalculatePositionError();
 
     /**
      * @brief ...
@@ -318,7 +331,7 @@ public:
      * 
      * @param param_error ...
      */
-    void Control_SetError(glm::vec2 param_error);
+    void Control_SetPositionError(glm::vec2 param_error);
 
     /**
      * @brief ...
@@ -332,7 +345,7 @@ public:
      * 
      * @return glm::vec2 ...
      */
-    glm::vec2 Control_GetError();
+    glm::vec2 Control_GetPositionError();
 
     /*--------------------------------------------*/
     /*       Drone Simulation Parameters          */
