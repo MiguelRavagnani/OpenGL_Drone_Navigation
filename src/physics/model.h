@@ -63,7 +63,8 @@ public:
         GLfloat param_force_constant,
         GLfloat param_momentum_of_inercia,
         GLfloat param_tau,
-        GLfloat param_integration_step);
+        GLfloat param_integration_step,
+        GLfloat param_scale);
 
     /**
      * @brief Drone state vector
@@ -145,6 +146,8 @@ public:
 
         std::vector<GLfloat> state_vector;
         std::vector<GLfloat> command;
+
+        GLfloat scale;
     };
 
     /**
@@ -365,6 +368,35 @@ public:
         std::vector<GLfloat> output_control_vector;
     };
 
+    /**
+     * @brief Set the Controlled object
+     * 
+     * @param param_state 
+     */
+    void SetControlled(bool param_state);
+
+    /**
+     * @brief Get the Controlled object
+     * 
+     * @return true 
+     * @return false 
+     */
+    bool GetControlled();
+
+    /**
+     * @brief Set the Scale object
+     * 
+     * @param param_scale 
+     */
+    void SetScale(GLfloat param_scale);
+
+    /**
+     * @brief Get the Scale object
+     * 
+     * @return GLfloat 
+     */
+    GLfloat GetScale();
+
 private:
     /*--------------------------------------------*/
 
@@ -373,6 +405,7 @@ private:
     DroneSimulationParameters m_simulation_parameters;
 
     GLfloat m_delta_time;
+    bool m_controlled;
     
 };
 

@@ -141,12 +141,13 @@ void Game::Init()
 	m_drone_model = new Model(
         15000.0f,
         0.25f,
-        9.81f * -G_CONST,
+        9.81f,
         0.1f,
-        0.0000001744f / 1.5f,
+        0.0000001744f,
         0.0002f,
         0.005,
-        0.006f);
+        0.006f,
+		1000.0f);
 
 	m_player->SetDroneModel(m_drone_model);
 
@@ -158,7 +159,7 @@ void Game::Init()
 	m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
 	m_player->m_drone_model->Drone_SetStatePhi(0.0f);
 	m_player->m_drone_model->Drone_SetStateAngularVelocity(0.0f);
-
+	
 	this->m_loop = GAME_MENU;
 	this->m_state = GAME_ACTIVE;
 }
@@ -243,15 +244,20 @@ void Game::ProcessInput(GLfloat param_delta_time)
 						break;
 					}
 				}
-
+				m_player->m_drone_model->SetControlled(false);
 				if (this->m_keys[GLFW_KEY_E])
 				{
-					m_player->m_drone_model->Drone_SetStateMotorSpeed2(1000);
+					m_increment = m_player->m_drone_model->Drone_GetStateMotorSpeed2();
+					
+					m_player->m_drone_model->Drone_SetStateMotorSpeed2((7000.0f));
+					m_player->m_drone_model->SetControlled(true);
 				}
 				if (this->m_keys[GLFW_KEY_Q])
 				{
-					m_player->m_drone_model->Drone_SetStateMotorSpeed1(1000);
+					m_player->m_drone_model->Drone_SetStateMotorSpeed1(7000.0f);
+					m_player->m_drone_model->SetControlled(true);
 				}
+				std::cout << "W1: " << m_player->m_drone_model->Drone_GetStateMotorSpeed1() << " W2: " << m_player->m_drone_model->Drone_GetStateMotorSpeed2() << std::endl;
 				break;
 			}
 
@@ -334,24 +340,16 @@ void Game::ProcessInput(GLfloat param_delta_time)
 
 		bool impact = false;
 
-		if (m_floor_colision && (m_drone_model->Drone_GetGravity() == 0.0f))
-			impact = true;
-
 		if (m_floor_colision)
 		{
-			if (!impact)
+			if (true)
 			{
-				m_drone_model->Drone_SetGravity(0.0f);
-				m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+				if (m_player->m_drone_model->Drone_GetStateLinearSpeed2() >= 0.0f)
+				{
+					m_player->m_drone_model->Drone_SetStateLinearSpeed2(0.0f);
+				}
 			}
-		}
-		else
-		{
-			if (m_drone_model->Drone_GetGravity() == 0.0f)
-			{
-				if (!m_floor_colision)
-					m_drone_model->Drone_SetGravity(9.81f * -G_CONST);
-			}
+			std::cout << "y speed: " << m_player->m_drone_model->Drone_GetStateLinearSpeed2() << std::endl;
 		}
 	}
 }
