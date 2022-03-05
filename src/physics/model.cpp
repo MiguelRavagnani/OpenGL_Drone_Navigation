@@ -24,10 +24,10 @@ Model::Model(
 {
     m_drone_parameters.scale = param_scale;
     m_drone_parameters.max_motor_speed = param_max_motor_speed;
-    m_drone_parameters.mass = param_mass * pow(param_scale, 2);
-    m_drone_parameters.gravity_acc = param_gravity_acc * -1.0f * param_scale;
-    m_drone_parameters.wing_lenght = param_wing_lenght / param_scale;
-    m_drone_parameters.force_constant = param_force_constant * param_scale;
+    m_drone_parameters.mass = param_mass;
+    m_drone_parameters.gravity_acc = param_gravity_acc * -1.0;
+    m_drone_parameters.wing_lenght = param_wing_lenght;
+    m_drone_parameters.force_constant = param_force_constant;
     m_drone_parameters.momentum_of_inercia = param_momentum_of_inercia;
     m_drone_parameters.tau = param_tau;
     m_drone_parameters.integration_step = param_integration_step;
@@ -70,7 +70,7 @@ std::vector<GLfloat> Model::StateVector(
     /* Control force */
     glm::vec2 control_force = glm::vec2(
         0.0f,
-        (force_1[0] * - pow(m_drone_parameters.scale, 2)) + (force_2[0] * - pow(m_drone_parameters.scale, 2)));
+        (force_1[0] * - 1.0f) + (force_2[0] * - 1.0f));
 
     /*  Rotation matrix */
     glm::mat2 rotation_matrix = glm::mat2(
@@ -92,12 +92,12 @@ std::vector<GLfloat> Model::StateVector(
 
     m_drone_parameters.state_vector[0] = w_dot[0];
     m_drone_parameters.state_vector[1] = w_dot[1];
-    m_drone_parameters.state_vector[2] = r_dot[0];
-    m_drone_parameters.state_vector[3] = r_dot[1];
-    m_drone_parameters.state_vector[4] = v_dot[0] * 5.0f * m_delta_time;
-    m_drone_parameters.state_vector[5] = v_dot[1] * 5.0f * m_delta_time;
+    m_drone_parameters.state_vector[2] = r_dot[0] * m_drone_parameters.scale;
+    m_drone_parameters.state_vector[3] = r_dot[1] * m_drone_parameters.scale;
+    m_drone_parameters.state_vector[4] = v_dot[0] * 1.0f * m_delta_time;
+    m_drone_parameters.state_vector[5] = v_dot[1] * 1.0f * m_delta_time;
     m_drone_parameters.state_vector[6] = phi_dot[0];
-    m_drone_parameters.state_vector[7] = omega_dot[0] * 5.0f *  m_delta_time ;
+    m_drone_parameters.state_vector[7] = omega_dot[0] * 1.0f *  m_delta_time ;
 
     return m_drone_parameters.state_vector;
 }
@@ -113,9 +113,9 @@ std::vector<GLfloat> Model::Control_System(
 
     float w_max = 15000.0f;
 
-    float max_control_force = m_drone_parameters.force_constant / m_drone_parameters.scale * pow(w_max, 2);
+    float max_control_force = m_drone_parameters.force_constant * pow(w_max, 2);
 
-    float max_torque = m_drone_parameters.wing_lenght * m_drone_parameters.force_constant / m_drone_parameters.scale * pow(w_max, 2);
+    float max_torque = m_drone_parameters.wing_lenght * m_drone_parameters.force_constant * pow(w_max, 2);
 
     /* Current states */
 
@@ -136,37 +136,52 @@ std::vector<GLfloat> Model::Control_System(
     glm::vec1 current_omega = glm::vec1((param_state_vector)[7]);
 
     /* Position control */
-    glm::vec1 kp_p(0.075f * 1.0f); 
-    glm::vec1 kd_p(0.25f  * 1.0f); 
+    glm::vec1 kp_p(0.075f * 48.0f); 
+    glm::vec1 kd_p(0.25f  * 123.0f); 
     
     Control_CalculatePositionError();
     glm::vec2 position_error = Control_GetPositionError();
-    std::cout << "Position error: " << position_error.x << " " << position_error.y << " " << current_v.x << " " << current_v.y << std::endl;
+
+    std::cout << "Position error: " << position_error.x << " " << position_error.y << std::endl;
+    std::cout << "Position error: " << position_error.x << " " << position_error.y << std::endl;
     
     glm::vec2 position_command(0.0f, 0.0f);
 
     glm::vec2 velocity_error(position_command - current_v);
 
+    std::cout << "Velocity error: " << velocity_error.x << " " << velocity_error.y << std::endl;
+    std::cout << "Velocity error: " << velocity_error.x << " " << velocity_error.y << std::endl;
+
     float control_action_force_x = kp_p[0] * position_error[0] + kd_p[0] * velocity_error[0];
-    float control_action_force_y = kp_p[0] * position_error[1] + kd_p[0] * velocity_error[1] - (gravity_force / pow(m_drone_parameters.scale, 3));
+    float control_action_force_y = kp_p[0] * position_error[1] + kd_p[0] * velocity_error[1] - (gravity_force);
+
+    std::cout << "KP_P: " << kp_p[0] 
+              << " | Pos Error: " << position_error[1] 
+              << " | KD_P: " << kd_p[0] 
+              << " | Vel Error: " << velocity_error[1] 
+              << " | Gravity: " << gravity_force 
+              << " | C_A Y: " << control_action_force_y << std::endl;
 
     control_action_force_y = std::min(-0.05f * max_control_force, std::max(control_action_force_y, -0.8f * (float)max_control_force));
 
     /* Attitude control */
-    float phi_control_action = 1.0f * atan2(1.0f * control_action_force_x, 1.0f * control_action_force_y);
+    float phi_control_action = -1.0f * atan2(-1.0f * control_action_force_x, 1.0f * control_action_force_y);
 
     std::cout << "Phi control action: " << phi_control_action << " | " << phi_max << std::endl;
 
     std::cout << "X before: " << control_action_force_x << std::endl;
+    std::cout << "Y before: " << control_action_force_y << std::endl;
+
 
     if (std::abs(phi_control_action) > phi_max)
     {
         float signal = phi_control_action / std::abs(phi_control_action);
-        phi_control_action = -1.0f * signal * phi_max;
+        phi_control_action = signal * phi_max;
         control_action_force_x =  control_action_force_y * tan(phi_control_action);
     }
 
     std::cout << "X after: " << control_action_force_x << std::endl;
+    std::cout << "Y after: " << control_action_force_y << std::endl;
 
     glm::vec2 control_action_force_xy(control_action_force_x, control_action_force_y);
 
@@ -176,34 +191,27 @@ std::vector<GLfloat> Model::Control_System(
 
     std::cout << "norm:" << norm << " x:" << control_action_force_x << " y:" << control_action_force_y << std::endl;
 
-    glm::vec2 control_action_force_1_2(norm * m_drone_parameters.scale / 2.0f);
+    glm::vec2 control_action_force_1_2(norm / 2.0f);
 
     /* Attitude constants */
-    float kp_a = 0.75f * 0.01f; 
-    float kd_a = 0.05f * 0.01f;
+    float kp_a = 0.75f * 0.1f; 
+    float kd_a = 0.05f * 1.0f;
 
-    float phi_error = (phi_control_action - current_phi[0]) * 10.0f;
+    float phi_error = (phi_control_action - current_phi[0]);
 
-    float omega_error = (0.0f - current_omega[0]) * 10.0f;
+    float omega_error = (0.0f - current_omega[0]);
 
     float control_action_torque = 0.0f;
 
-    if (omega_error != 0.0f)
-    {
-        control_action_torque = kp_a * phi_error * kd_a * omega_error;
-    }
-    else
-    {
-        control_action_torque = kp_a * phi_error * kd_a;
-    }
+    control_action_torque = kp_a * phi_error + kd_a *  omega_error;
 
     std::cout << " | " << kp_a << " | " <<  phi_error << " | " <<  kd_a << " | " <<  omega_error << std::endl;
 
-    control_action_torque = std::max(-1.0f * (float)max_torque, std::min(control_action_torque, 1.0f * (float)max_torque));
+    control_action_torque = std::max(-0.2f * (float)max_torque, std::min(control_action_torque, 0.2f * (float)max_torque));
 
     /* Forces delta */
 
-    float delta_1_2 = std::abs(control_action_torque * 100000.0f);
+    float delta_1_2 = std::abs(control_action_torque);
 
     std::cout << "Action 1 2: " << control_action_force_1_2[0] << " " << control_action_force_1_2[1] << " Delta: " << delta_1_2 << std::endl;
 
@@ -211,17 +219,17 @@ std::vector<GLfloat> Model::Control_System(
 
     if (control_action_torque >= 0.0f)
     {
-        (control_action_force_1_2[0] = control_action_force_1_2[0] - delta_1_2);// *  position_error.x / 300.0f; 
-        (control_action_force_1_2[1] = control_action_force_1_2[1] + delta_1_2);// * - 300.0f / position_error.x;
+        (control_action_force_1_2[0] = control_action_force_1_2[0] + delta_1_2); 
+        (control_action_force_1_2[1] = control_action_force_1_2[1] - delta_1_2);
     }
     else
     {
-        control_action_force_1_2[0] = control_action_force_1_2[0] + delta_1_2;// *  300.0f / position_error.x; 
-        control_action_force_1_2[1] = control_action_force_1_2[1] - delta_1_2;// * position_error.x / 300.0f;
+        control_action_force_1_2[0] = control_action_force_1_2[0] - delta_1_2;
+        control_action_force_1_2[1] = control_action_force_1_2[1] + delta_1_2;
     }
 
-    float w_1 = sqrt(control_action_force_1_2[0] * 1000.0f / (m_drone_parameters.force_constant * m_drone_parameters.scale));
-    float w_2 = sqrt(control_action_force_1_2[1] * 1000.0f / (m_drone_parameters.force_constant * m_drone_parameters.scale));
+    float w_1 = sqrt(control_action_force_1_2[0] / (m_drone_parameters.force_constant));
+    float w_2 = sqrt(control_action_force_1_2[1]/ (m_drone_parameters.force_constant));
     
     float w_1_out = std::max(0.0f, std::min(w_1, w_max));
     float w_2_out = std::max(0.0f, std::min(w_2, w_max));
@@ -383,8 +391,8 @@ glm::vec2 Model::Control_GetPositionError()
 
 void Model::Control_CalculatePositionError()
 {
-    m_control_parameters.error.x = m_control_parameters.waypoint.x - this->Drone_GetStatePosition1();
-    m_control_parameters.error.y = m_control_parameters.waypoint.y - this->Drone_GetStatePosition2();
+    m_control_parameters.error.x = (m_control_parameters.waypoint.x - this->Drone_GetStatePosition1()) / m_drone_parameters.scale;
+    m_control_parameters.error.y = (m_control_parameters.waypoint.y - this->Drone_GetStatePosition2()) / m_drone_parameters.scale;
 
     // std::cout << "Error: (" << m_control_parameters.error.x << ", " << m_control_parameters.error.y << ")" << std::endl;
     // std::cout << "Mouse: (" << m_control_parameters.waypoint.x << ", " << m_control_parameters.waypoint.y << ")" << std::endl;

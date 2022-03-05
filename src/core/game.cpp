@@ -147,7 +147,7 @@ void Game::Init()
         0.0002f,
         0.005,
         0.006f,
-		1000.0f);
+		5000.0f);
 
 	m_player->SetDroneModel(m_drone_model);
 
