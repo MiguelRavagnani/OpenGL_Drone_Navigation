@@ -136,8 +136,8 @@ std::vector<GLfloat> Model::Control_System(
     glm::vec1 current_omega = glm::vec1((param_state_vector)[7]);
 
     /* Position control */
-    glm::vec1 kp_p(0.075f * 48.0f); 
-    glm::vec1 kd_p(0.25f  * 123.0f); 
+    glm::vec1 kp_p(0.075f * 1250.1f); 
+    glm::vec1 kd_p(0.25f  * 140.1f); 
     
     Control_CalculatePositionError();
     glm::vec2 position_error = Control_GetPositionError();
@@ -153,7 +153,7 @@ std::vector<GLfloat> Model::Control_System(
     std::cout << "Velocity error: " << velocity_error.x << " " << velocity_error.y << std::endl;
 
     float control_action_force_x = kp_p[0] * position_error[0] + kd_p[0] * velocity_error[0];
-    float control_action_force_y = kp_p[0] * position_error[1] + kd_p[0] * velocity_error[1] - (gravity_force);
+    float control_action_force_y = kp_p[0] * position_error[1] + kd_p[0] * velocity_error[1] - (gravity_force*0.89f);
 
     std::cout << "KP_P: " << kp_p[0] 
               << " | Pos Error: " << position_error[1] 
@@ -162,7 +162,7 @@ std::vector<GLfloat> Model::Control_System(
               << " | Gravity: " << gravity_force 
               << " | C_A Y: " << control_action_force_y << std::endl;
 
-    control_action_force_y = std::min(-0.05f * max_control_force, std::max(control_action_force_y, -0.8f * (float)max_control_force));
+    control_action_force_y = std::min(-0.001f * max_control_force, std::max(control_action_force_y, -0.8f * (float)max_control_force));
 
     /* Attitude control */
     float phi_control_action = -1.0f * atan2(-1.0f * control_action_force_x, 1.0f * control_action_force_y);
@@ -194,8 +194,8 @@ std::vector<GLfloat> Model::Control_System(
     glm::vec2 control_action_force_1_2(norm / 2.0f);
 
     /* Attitude constants */
-    float kp_a = 0.75f * 0.1f; 
-    float kd_a = 0.05f * 1.0f;
+    float kp_a = 0.75f * 10.7f; 
+    float kd_a = 0.05f * 20.5f;
 
     float phi_error = (phi_control_action - current_phi[0]);
 
