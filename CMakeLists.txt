@@ -1,40 +1,10 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+# Projects Settings
+cmake_minimum_required (VERSION 3.1)
+project (opengl-cmake-skeleton)
 
-project(game VERSION 1.0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(OpenGL REQUIRED)
-
-find_package(glm REQUIRED)
-message(STATUS "glm included at ${glm_INCLUDE_DIR}")
-
-find_package(GLEW REQUIRED)
-message(STATUS "GLEW included at ${GLEW_INCLUDE_DIR}")
-
-find_package(glfw3 REQUIRED)
-message(STATUS "Found glfw3 in ${glfw3_INCLUDE_DIR}")
-
-
-set(INCLUDE_DIRS ${OPENGL_INCLUDE_DIR} ${glm_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${glfw3_INCLUDE_DIRS})
-
-set(LOCAL_INCLUDE_DIRS
-    "${CMAKE_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/core"
-    "${CMAKE_SOURCE_DIR}/src/shading"
-    "${CMAKE_SOURCE_DIR}/src/utility"
-    "${CMAKE_SOURCE_DIR}/src/renderer"
-    "${CMAKE_SOURCE_DIR}/src/physics"
-    "${CMAKE_SOURCE_DIR}/src/third_party/Glad/src")
-
-set(LIBRARIES ${OPENGL_LIBRARIES} ${glm_LIBRARIES} ${GLEW_LIBRARIES} ${glfw3_LIBRARIES})
-
-include_directories(${INCLUDE_DIRS} ${LOCAL_INCLUDE_DIRS})
-
-set(SOURCE_FILES 
+# The main executable
+add_executable(
+    opengl-cmake-skeleton
     main.cpp
     src/third_party/Glad/src/glad.c
     src/core/game.cpp
@@ -48,10 +18,43 @@ set(SOURCE_FILES
     src/physics/screen_colision.cpp
     src/physics/math_utils.cpp
     src/physics/model.cpp
-    src/physics/physics_handler.cpp)
+    src/physics/physics_handler.cpp
+)
 
-add_executable(game ${SOURCE_FILES} )
+set_property(TARGET opengl-cmake-skeleton PROPERTY CXX_STANDARD 11)
+target_compile_options(opengl-cmake-skeleton PRIVATE -Wall)
 
-target_link_libraries(game ${LIBRARIES} glfw)
+add_definitions(-DGLEW_STATIC)
+add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/glm EXCLUDE_FROM_ALL)
 
-target_include_directories(game PRIVATE ${LOCAL_INCLUDE_DIRS})
+target_link_libraries(
+    opengl-cmake-skeleton
+    PRIVATE glfw
+    PRIVATE libglew_static
+    PRIVATE glm
+)
+
+target_include_directories(opengl-cmake-skeleton
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/core
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/shading
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/shading
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/utility
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/utility
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/renderer
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/physics
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/physics
+
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/Glad/src
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/third_party/Glad/src
+)
