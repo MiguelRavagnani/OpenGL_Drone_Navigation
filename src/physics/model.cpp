@@ -54,18 +54,18 @@ std::vector<GLfloat> Model::StateVector(
         (*param_state_vector)[4] * -1.0f,
         (*param_state_vector)[5]);
 
-    glm::fvec1 current_phi = glm::fvec1((*param_state_vector)[6]);
+    glm::vec1 current_phi = glm::vec1((*param_state_vector)[6]);
 
-    glm::fvec1 current_omega = glm::fvec1((*param_state_vector)[7]);
+    glm::vec1 current_omega = glm::vec1((*param_state_vector)[7]);
 
     /* Auxilay force 1 */
-    glm::fvec1 force_1 = glm::fvec1(m_drone_parameters.force_constant * pow(current_w[0], 2));
+    glm::vec1 force_1 = glm::vec1(m_drone_parameters.force_constant * pow(current_w[0], 2));
     
     /* Auxilay force 2 */
-    glm::fvec1 force_2 = glm::fvec1(m_drone_parameters.force_constant * pow(current_w[1], 2));
+    glm::vec1 force_2 = glm::vec1(m_drone_parameters.force_constant * pow(current_w[1], 2));
 
     /* Torque */
-    glm::fvec1 torque = glm::fvec1((m_drone_parameters.wing_lenght * (force_1[0] - force_2[0])));
+    glm::vec1 torque = glm::vec1((m_drone_parameters.wing_lenght * (force_1[0] - force_2[0])));
 
     /* Control force */
     glm::vec2 control_force = glm::vec2(
@@ -87,8 +87,8 @@ std::vector<GLfloat> Model::StateVector(
     glm::vec2 v_dot = rotation_matrix * control_force;
     v_dot.y = (1 / m_drone_parameters.mass) * (v_dot.y + (-1.0f * m_drone_parameters.mass * m_drone_parameters.gravity_acc));
     v_dot.x = (1 / m_drone_parameters.mass) * v_dot.x;
-    glm::fvec1 phi_dot = current_omega;
-    glm::fvec1 omega_dot = glm::fvec1(torque/ m_drone_parameters.momentum_of_inercia);
+    glm::vec1 phi_dot = current_omega;
+    glm::vec1 omega_dot = glm::vec1(torque/ m_drone_parameters.momentum_of_inercia);
 
     m_drone_parameters.state_vector[0] = w_dot[0];
     m_drone_parameters.state_vector[1] = w_dot[1];
@@ -131,13 +131,13 @@ std::vector<GLfloat> Model::Control_System(
         (param_state_vector)[4] * -1.0f,
         (param_state_vector)[5]);
 
-    glm::fvec1 current_phi = glm::fvec1((param_state_vector)[6]);
+    glm::vec1 current_phi = glm::vec1((param_state_vector)[6]);
 
-    glm::fvec1 current_omega = glm::fvec1((param_state_vector)[7]);
+    glm::vec1 current_omega = glm::vec1((param_state_vector)[7]);
 
     /* Position control */
-    glm::fvec1 kp_p(0.075f * 1250.1f); 
-    glm::fvec1 kd_p(0.25f  * 140.1f); 
+    glm::vec1 kp_p(0.075f * 1250.1f); 
+    glm::vec1 kd_p(0.25f  * 140.1f); 
     
     Control_CalculatePositionError();
     glm::vec2 position_error = Control_GetPositionError();

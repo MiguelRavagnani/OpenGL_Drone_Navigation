@@ -7,10 +7,23 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <functional>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h> 
+#include <emscripten/html5.h>
+#include <cmath>
+#endif
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+
+std::function<void()> registered_loop;
+
+void loop_iteration() {
+	registered_loop();
+}
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -20,14 +33,18 @@ Game Drone(SCREEN_WIDTH, SCREEN_HEIGHT);
 int main(int argc, char *argv[])
 {
     glfwInit();
+   
+#ifdef __EMSCRIPTEN__
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+#else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-    glfwWindowHint(GLFW_RESIZABLE, false);
+
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Drone", nullptr, nullptr);
     glfwMakeContextCurrent(window);
@@ -53,7 +70,16 @@ int main(int argc, char *argv[])
 
     GLfloat last_sprite_frame_time = 0.0f;
 
-    while (!glfwWindowShouldClose(window))
+#ifdef __EMSCRIPTEN__
+      emscripten_set_main_loop(loop_iteration, 0, 1);
+#else
+      while (!glfwWindowShouldClose(window)) {
+        loop_iteration();
+           }
+      glfwTerminate();
+#endif
+
+    registered_loop = [&]()
     {
 
         GLfloat delta_current_time = glfwGetTime();
@@ -99,7 +125,15 @@ int main(int argc, char *argv[])
 
     ResourceManager::Clear();
 
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(loop_iteration, 0, 1);
+#else
+    while (!glfwWindowShouldClose(window))
+    {
+        loop_iteration();
+    }
     glfwTerminate();
+#endif
     return 0;
 }
 

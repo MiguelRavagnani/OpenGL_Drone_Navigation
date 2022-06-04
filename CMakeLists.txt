@@ -1,10 +1,11 @@
 # Projects Settings
-cmake_minimum_required (VERSION 3.1)
-project (opengl-cmake-skeleton)
+cmake_minimum_required(VERSION 3.1)
+
+project (opengl-drone-navigation)
 
 # The main executable
 add_executable(
-    opengl-cmake-skeleton
+    opengl-drone-navigation
     main.cpp
     src/third_party/Glad/src/glad.c
     src/core/game.cpp
@@ -21,22 +22,63 @@ add_executable(
     src/physics/physics_handler.cpp
 )
 
-set_property(TARGET opengl-cmake-skeleton PROPERTY CXX_STANDARD 11)
-target_compile_options(opengl-cmake-skeleton PRIVATE -Wall)
+if (EMSCRIPTEN)
+    target_link_libraries(opengl-drone-navigation PUBLIC "-s USE_GLFW=3")
+    target_link_libraries(opengl-drone-navigation PUBLIC "-s USE_WEBGL2=1")
+    target_link_libraries(opengl-drone-navigation PUBLIC "-s WASM=1")
 
-add_definitions(-DGLEW_STATIC)
-add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
-add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
+    foreach(file "index.html" "run_webassembly.py")
+    configure_file(src/web/${file} ${file})
+    endforeach(file)
+
+    foreach(file 
+        "bg_1.png"
+        "bg_2.png"
+        "button_automatic.png"
+        "button_manual.png"
+        "button_menu_close.png"
+        "button_menu.png"
+        "drone_frame.png"
+        "drone_still.png"
+        "waypoint_1.png"
+        )
+    configure_file(textures/${file} ${file} ${file} ${file} ${file} ${file} ${file} ${file} ${file})
+    endforeach(file)
+
+    foreach(file "src/shaders/sprite.frag" "src/shaders/sprite.vert")
+    configure_file(${file} ${file})
+    endforeach(file)
+
+    set_property(TARGET opengl-drone-navigation APPEND_STRING PROPERTY LINK_FLAGS
+    "--preload-file ${CMAKE_CURRENT_BINARY_DIR}/src/shaders/@/src/shaders/")
+  
+else()
+
+    add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
+    target_link_libraries(opengl-drone-navigation PRIVATE glfw)
+
+    add_definitions(-DGLEW_STATIC)
+    add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
+    target_link_libraries(opengl-drone-navigation PRIVATE libglew_static)
+
+endif()
+
+# set_property(TARGET opengl-drone-navigation PROPERTY CXX_STANDARD 11)
+# target_compile_options(opengl-drone-navigation PRIVATE -Wall)
+
+# add_definitions(-DGLEW_STATIC)
+# add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
+# add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/glm EXCLUDE_FROM_ALL)
 
 target_link_libraries(
-    opengl-cmake-skeleton
+    opengl-drone-navigation
     PRIVATE glfw
     PRIVATE libglew_static
     PRIVATE glm
 )
 
-target_include_directories(opengl-cmake-skeleton
+target_include_directories(opengl-drone-navigation
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src
 
