@@ -9,7 +9,7 @@
 
 #include <vector>
 #include <math.h>
-#include<algorithm>
+#include <algorithm>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>

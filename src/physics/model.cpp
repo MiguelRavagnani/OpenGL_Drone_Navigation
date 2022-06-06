@@ -1,6 +1,7 @@
 #include "model.h"
 
 #include <iostream>
+#include "glm/ext.hpp"
 
 #define PI 3.14159265f
 

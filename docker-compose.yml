@@ -9,10 +9,9 @@ services:
         container_name: webassembly
         
         volumes:
-            - .:/home/web 
-
-        ports:
-            - 8888:8888
+            - ./:/home/web 
+        
+        network_mode: "host"
 
         restart: always
 
