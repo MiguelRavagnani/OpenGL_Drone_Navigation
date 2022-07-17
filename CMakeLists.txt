@@ -1,12 +1,14 @@
 # Projects Settings
 cmake_minimum_required (VERSION 3.1)
-project (opengl-cmake-skeleton)
+project (opengl-drone-navigation)
 
 # The main executable
 add_executable(
-    opengl-cmake-skeleton
+    opengl-drone-navigation
     main.cpp
     src/third_party/Glad/src/glad.c
+    src/core/input.cpp
+    src/core/application.cpp
     src/core/game.cpp
     src/core/game_object.cpp
     src/core/game_screen.cpp
@@ -21,8 +23,8 @@ add_executable(
     src/physics/physics_handler.cpp
 )
 
-set_property(TARGET opengl-cmake-skeleton PROPERTY CXX_STANDARD 11)
-target_compile_options(opengl-cmake-skeleton PRIVATE -Wall)
+set_property(TARGET opengl-drone-navigation PROPERTY CXX_STANDARD 11)
+target_compile_options(opengl-drone-navigation PRIVATE -Wall)
 
 add_definitions(-DGLEW_STATIC)
 add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
@@ -30,13 +32,13 @@ add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/glm EXCLUDE_FROM_ALL)
 
 target_link_libraries(
-    opengl-cmake-skeleton
+    opengl-drone-navigation
     PRIVATE glfw
     PRIVATE libglew_static
     PRIVATE glm
 )
 
-target_include_directories(opengl-cmake-skeleton
+target_include_directories(opengl-drone-navigation
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src
 
