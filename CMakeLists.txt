@@ -8,6 +8,7 @@ add_executable(
     opengl-drone-navigation
     main.cpp
     vendor/glfw/deps/glad.c
+    src/core/application.cpp
     src/core/game.cpp
     src/core/game_object.cpp
     src/core/game_screen.cpp
@@ -51,12 +52,6 @@ endforeach(file)
 set_property(TARGET opengl-drone-navigation APPEND_STRING PROPERTY LINK_FLAGS
 "--preload-file ${CMAKE_CURRENT_BINARY_DIR}/src/shaders/@/src/shaders/")
 
-# set_property(TARGET opengl-drone-navigation PROPERTY CXX_STANDARD 11)
-# target_compile_options(opengl-drone-navigation PRIVATE -Wall)
-
-# add_definitions(-DGLEW_STATIC)
-# add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
-# add_subdirectory(vendor/glew EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/glm EXCLUDE_FROM_ALL)
 
 target_link_libraries(
