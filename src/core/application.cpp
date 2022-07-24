@@ -49,7 +49,9 @@ void Application::Run()
 
     GLfloat last_sprite_frame_time = 0.0f;
 
-    while (!glfwWindowShouldClose(window))
+    emscripten_set_main_loop(loop_iteration, 0, 1);
+
+    registered_loop = [&]()
     {
 
         GLfloat delta_current_time = glfwGetTime();

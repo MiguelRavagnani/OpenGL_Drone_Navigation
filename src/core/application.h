@@ -18,6 +18,20 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <functional>
+
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include <cmath>
+
+std::function<void()> registered_loop;
+
+void loop_iteration( {
+    registered_loop();
+})
+
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGH = 600;
 
 /**
  * @brief Class description
@@ -43,6 +57,10 @@ public:
 
     void Run();
     void Exit();
+
+protected:
+    virtual void loop();
+
 private:
     /*--------------------------------------------*/
     /*Member variables starting with m_*/
