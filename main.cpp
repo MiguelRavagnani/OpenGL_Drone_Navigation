@@ -9,11 +9,9 @@
 #include <iomanip>
 #include <functional>
 
-#ifdef __EMSCRIPTEN__
 #include <emscripten.h> 
 #include <emscripten/html5.h>
 #include <cmath>
-#endif
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -34,15 +32,8 @@ int main(int argc, char *argv[])
 {
     glfwInit();
    
-#ifdef __EMSCRIPTEN__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-#else
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
 
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
@@ -70,14 +61,7 @@ int main(int argc, char *argv[])
 
     GLfloat last_sprite_frame_time = 0.0f;
 
-#ifdef __EMSCRIPTEN__
-      emscripten_set_main_loop(loop_iteration, 0, 1);
-#else
-      while (!glfwWindowShouldClose(window)) {
-        loop_iteration();
-           }
-      glfwTerminate();
-#endif
+    emscripten_set_main_loop(loop_iteration, 0, 1);
 
     registered_loop = [&]()
     {
@@ -125,15 +109,7 @@ int main(int argc, char *argv[])
 
     ResourceManager::Clear();
 
-#ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(loop_iteration, 0, 1);
-#else
-    while (!glfwWindowShouldClose(window))
-    {
-        loop_iteration();
-    }
-    glfwTerminate();
-#endif
     return 0;
 }
 

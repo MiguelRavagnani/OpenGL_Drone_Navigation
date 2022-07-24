@@ -70,6 +70,8 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/src/config/config.hpp
 )
 
+SET(CMAKE_EXECUTABLE_SUFFIX ".js")
+
 target_include_directories(opengl-drone-navigation
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src

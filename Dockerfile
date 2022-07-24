@@ -3,7 +3,6 @@ FROM ubuntu:20.04
 RUN mkdir /home/opengl
 WORKDIR /home/opengl
 
-COPY . .
 
 RUN ln -snf /bin/bash /bin/sh
 
@@ -38,6 +37,9 @@ WORKDIR /home/opengl/cmake-3.23.2
 RUN ./bootstrap
 RUN make
 RUN make install
+
+WORKDIR /home/opengl
+COPY . .
 
 WORKDIR /home/opengl/vendor/emsdk
 RUN python -X utf8 emsdk.py install 3.1.12

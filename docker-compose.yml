@@ -9,7 +9,7 @@ services:
         container_name: webassembly
         
         volumes:
-            - ./:/home/web 
+            - ./:/home/transfer
         
         network_mode: "host"
 
