@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -132,20 +133,13 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     {
         double x_position;
         double y_position;
+=======
+#include "application.h"
 
-        glfwGetCursorPos(window, &x_position, &y_position);
-
-        if (action == GLFW_PRESS)
-            Drone.m_keys[button] = true;
-        else if (action == GLFW_RELEASE)
-            Drone.m_keys[button] = false;
-
-        Drone.SetMouseClick(glm::vec2(x_position, y_position));
-        // std::cout << "Cursor x: " << x_position << " Cursor y: " << y_position << "" <<std::endl;
-    }
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+int main(int argc, char *argv[])
 {
-    glViewport(0, 0, width, height);
+    Application *app = new Application(800U, 600U);
+>>>>>>> main
+
+    app->Run();
 }
