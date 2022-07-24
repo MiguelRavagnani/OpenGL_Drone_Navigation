@@ -54,12 +54,12 @@ void SpriteSheetRenderer::UpdateRenderData(GLuint param_frame)
     unsigned int VBO;
     GLfloat vertices[] = { 
     /*  pos         tex       */
-        0.0f, 0.2f, 0.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
-        1.0f, 0.0f, 1.0f, (0.0f     + (0.16667 * (param_frame - 1.0f))),
-        0.0f, 0.0f, 0.0f, (0.0f     + (0.16667 * (param_frame - 1.0f))),
-        0.0f, 0.2f, 0.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
-        1.0f, 0.2f, 1.0f, (0.16667f + (0.16667 * (param_frame - 1.0f))),
-        1.0f, 0.0f, 1.0f, (0.0f     + (0.16667 * (param_frame - 1.0f)))
+        0.0f, 0.2f, 0.0f, (0.16667f + (GLfloat)(0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.0f, 1.0f, (0.0f     + (GLfloat)(0.16667 * (param_frame - 1.0f))),
+        0.0f, 0.0f, 0.0f, (0.0f     + (GLfloat)(0.16667 * (param_frame - 1.0f))),
+        0.0f, 0.2f, 0.0f, (0.16667f + (GLfloat)(0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.2f, 1.0f, (0.16667f + (GLfloat)(0.16667 * (param_frame - 1.0f))),
+        1.0f, 0.0f, 1.0f, (0.0f     + (GLfloat)(0.16667 * (param_frame - 1.0f)))
     };
 
     glGenVertexArrays(1, &this->m_quad_VAO);

@@ -1,5 +1,10 @@
 #include "application.h"
 
+std::function<void()> registered_loop;
+void loop_iteration() {
+    registered_loop();
+}
+
 Application::Application(
         unsigned int param_screen_width,
         unsigned int param_screen_height)
@@ -49,7 +54,9 @@ void Application::Run()
 
     GLfloat last_sprite_frame_time = 0.0f;
 
-    while (!glfwWindowShouldClose(window))
+    emscripten_set_main_loop(loop_iteration, 0, 1);
+
+    registered_loop = [&]()
     {
 
         GLfloat delta_current_time = glfwGetTime();
@@ -91,7 +98,7 @@ void Application::Run()
         m_drone->Render();
 
         glfwSwapBuffers(window);
-    }
+    };
 
     ResourceManager::Clear();
 

@@ -18,6 +18,14 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <functional>
+
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include <cmath>
+
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGH = 600;
 
 /**
  * @brief Class description
@@ -43,6 +51,7 @@ public:
 
     void Run();
     void Exit();
+
 private:
     /*--------------------------------------------*/
     /*Member variables starting with m_*/

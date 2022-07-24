@@ -1,0 +1,7 @@
+namespace asset {
+#ifdef __EMSCRIPTEN__
+#define SHADER_DIR "/src/shaders"
+#else
+#define SHADER_DIR "@CMAKE_SOURCE_DIR@/src/shaders""
+#endif
+}
