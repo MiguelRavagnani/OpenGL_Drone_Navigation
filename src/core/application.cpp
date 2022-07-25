@@ -1,4 +1,5 @@
 #include "application.h"
+#include "emscripten/bind.h"
 
 std::function<void()> registered_loop;
 void loop_iteration() {
@@ -103,4 +104,10 @@ void Application::Run()
     ResourceManager::Clear();
 
     glfwTerminate();
+}
+
+EMSCRIPTEN_BINDINGS (application_class) {
+    emscripten::class_<Application>("Application")
+    .constructor<unsigned int, unsigned int>()
+    .function("Run", &Application::Run);
 }

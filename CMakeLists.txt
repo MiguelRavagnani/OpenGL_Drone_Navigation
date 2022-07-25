@@ -26,6 +26,9 @@ add_executable(
 target_link_libraries(opengl-drone-navigation PUBLIC "-s USE_GLFW=3")
 target_link_libraries(opengl-drone-navigation PUBLIC "-s USE_WEBGL2=1")
 target_link_libraries(opengl-drone-navigation PUBLIC "-s WASM=1")
+target_link_libraries(opengl-drone-navigation PUBLIC "-s EXPORT_ALL=1")
+target_link_libraries(opengl-drone-navigation PUBLIC "-s LINKABLE=1")
+target_link_libraries(opengl-drone-navigation PUBLIC "-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 
 foreach(file "index.html" "run_webassembly.py")
 configure_file(src/web/${file} ${file})
