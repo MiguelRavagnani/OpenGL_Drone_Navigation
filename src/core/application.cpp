@@ -20,11 +20,14 @@ void Application::Run()
 {
     Input &callback = Input::GetInstance();
     callback.SetGameInstance(m_drone);
+    std::cout << "DEBUG: Game instance set" << std::endl;
 
-    glfwInit();
+    if (!glfwInit()) {
+        std::cout << "DEBUG: Could not start Glfw" << std::endl;
+        throw std::runtime_error("Couldn't init GLFW");
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -36,6 +39,7 @@ void Application::Run()
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
+        std::cout << "DEBUG: Failed to initialize GLAD" << std::endl;
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
@@ -48,17 +52,15 @@ void Application::Run()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_drone->Init();
+    std::cout << "DEBUG: Drone Init" << std::endl;
 
     GLfloat delta_time = 0.0f;
     GLfloat delta_last_time = 0.0f;
 
     GLfloat last_sprite_frame_time = 0.0f;
 
-    emscripten_set_main_loop(loop_iteration, 0, 1);
-
     registered_loop = [&]()
     {
-
         GLfloat delta_current_time = glfwGetTime();
         GLfloat current_sprite_frame_time = glfwGetTime();
         
@@ -99,6 +101,8 @@ void Application::Run()
 
         glfwSwapBuffers(window);
     };
+
+    emscripten_set_main_loop(loop_iteration, 0, 1);
 
     ResourceManager::Clear();
 

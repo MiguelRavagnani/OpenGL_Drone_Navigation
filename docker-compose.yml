@@ -14,5 +14,3 @@ services:
         network_mode: "host"
 
         restart: always
-
-        command: tail -f /dev/null

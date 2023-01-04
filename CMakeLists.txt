@@ -32,17 +32,16 @@ configure_file(src/web/${file} ${file})
 endforeach(file)
 
 foreach(file 
-    "bg_1.png"
-    "bg_2.png"
-    "button_automatic.png"
-    "button_manual.png"
-    "button_menu_close.png"
-    "button_menu.png"
-    "drone_frame.png"
-    "drone_still.png"
-    "waypoint_1.png"
+    "textures/bg_2.png"
+    "textures/button_automatic.png"
+    "textures/button_manual.png"
+    "textures/button_menu_close.png"
+    "textures/button_menu.png"
+    "textures/drone_frame.png"
+    "textures/drone_still.png"
+    "textures/waypoint_1.png"
     )
-configure_file(textures/${file} ${file} ${file} ${file} ${file} ${file} ${file} ${file} ${file})
+configure_file(${file} ${file} ${file} ${file} ${file} ${file} ${file} ${file} COPYONLY)
 endforeach(file)
 
 foreach(file "src/shaders/sprite.frag" "src/shaders/sprite.vs")
@@ -50,7 +49,7 @@ configure_file(${file} ${file})
 endforeach(file)
 
 set_property(TARGET opengl-drone-navigation APPEND_STRING PROPERTY LINK_FLAGS
-"--preload-file ${CMAKE_CURRENT_BINARY_DIR}/src/shaders/@/src/shaders/")
+"--preload-file ${CMAKE_CURRENT_BINARY_DIR}/src/shaders/@/src/shaders/ --preload-file ${CMAKE_CURRENT_BINARY_DIR}/textures/@/textures/ --use-preload-plugins -sNO_DISABLE_EXCEPTION_CATCHING")
 
 add_subdirectory(vendor/glm EXCLUDE_FROM_ALL)
 

@@ -64,3 +64,5 @@ RUN groupadd -f -g ${OPENGL_GID} opengl \
     && useradd -d /home/opengl -s /bin/bash -g ${OPENGL_GID} -u ${OPENGL_UID} opengl
 
 USER opengl
+
+CMD [ "python", "/home/opengl/build_emscripten/run_webassembly.py" ]
